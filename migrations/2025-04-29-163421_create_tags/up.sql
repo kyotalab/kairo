@@ -1,0 +1,7 @@
+-- Your SQL goes here
+CREATE TABLE tags (
+    id TEXT PRIMARY KEY,
+    tag_name TEXT NOT NULL UNIQUE,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    deleted BOOLEAN NOT NULL DEFAULT FALSE
+);
