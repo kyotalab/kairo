@@ -1,5 +1,5 @@
 use crate::schema::tags;
-use chrono::NaiveDateTime;
+use chrono::{DateTime, Utc};
 use diesel::prelude::*;
 
 #[derive(Queryable, Selectable, Debug, Clone)]
@@ -7,6 +7,6 @@ use diesel::prelude::*;
 pub struct Tag {
     pub id: String,
     pub tag_name: String,
-    pub created_at: NaiveDateTime,
+    pub created_at: DateTime<Utc>,
     pub deleted: bool,
 }

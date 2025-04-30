@@ -1,5 +1,5 @@
 use crate::schema::tasks;
-use chrono::NaiveDateTime;
+use chrono::{DateTime, Utc};
 use diesel::prelude::*;
 use diesel_derive_enum::DbEnum;
 
@@ -21,9 +21,9 @@ pub struct Task {
     pub title: String,
     pub description: Option<String>,
     pub priority: TaskPriority,
-    pub due_date: Option<NaiveDateTime>,
-    pub created_at: NaiveDateTime,
-    pub updated_at: NaiveDateTime,
+    pub due_date: Option<DateTime<Utc>>,
+    pub created_at: DateTime<Utc>,
+    pub updated_at: DateTime<Utc>,
     pub archived: bool,
     pub deleted: bool,
     pub project_id: Option<String>,
