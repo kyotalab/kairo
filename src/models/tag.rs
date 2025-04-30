@@ -1,13 +1,12 @@
-use chrono::{DateTime, Utc};
+use crate::schema::tags;
+use chrono::NaiveDateTime;
 use diesel::prelude::*;
-use diesel::sqlite::Sqlite;
 
 #[derive(Queryable, Selectable, Debug, Clone)]
-#[diesel(table_name = crate::schema::tags)]
-#[diesel(check_for_backend(diesel::sqlite::Sqlite))]
+#[diesel(table_name = tags)]
 pub struct Tag {
     pub id: String,
     pub tag_name: String,
-    pub created_at: DateTime<Utc>,
+    pub created_at: NaiveDateTime,
     pub deleted: bool,
 }
