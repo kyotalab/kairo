@@ -221,6 +221,35 @@ pub fn delete_note(conn: &mut SqliteConnection, note_id: &str) -> Result<(), Err
 }
 
 // ==============================
+// ▼ Unarchive / Restore
+// ==============================
+pub fn unarchive_note(conn: &mut SqliteConnection, note_id: &str) -> Result<Note, Error> {
+    let archived_note = ensure_note_exists(conn, note_id)?;
+
+    if !archived_note.archived {
+        return Err(Error::QueryBuilderError("Note is not archived".into()));
+    }
+
+    diesel::update(notes.find(note_id))
+        .set(ArchivedNote { archived: false })
+        .returning(Note::as_select())
+        .get_result(conn)
+}
+
+pub fn restore_note(conn: &mut SqliteConnection, note_id: &str) -> Result<Note, Error> {
+    let deleted_note = ensure_note_exists(conn, note_id)?;
+
+    if !deleted_note.deleted {
+        return Err(Error::QueryBuilderError("Note is not deleted".into()));
+    }
+
+    diesel::update(notes.find(note_id))
+        .set(SoftDeletedNote { deleted: false })
+        .returning(Note::as_select())
+        .get_result(conn)
+}
+
+// ==============================
 // ▼ Internal Common Utils
 // ==============================
 fn ensure_note_exists(conn: &mut SqliteConnection, note_id: &str) -> Result<Note, Error> {

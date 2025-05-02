@@ -56,4 +56,12 @@ pub enum Commands {
         #[arg(long = "id")]
         arg_id: String,
     },
+    Unarchive {
+        #[arg(long = "id")]
+        arg_id: String,
+    },
+    Restore {
+        #[arg(long = "id")]
+        arg_id: String,
+    },
 }

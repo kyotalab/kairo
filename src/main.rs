@@ -84,5 +84,13 @@ fn main() {
             Ok(note) => println!("{:?}", note),
             Err(e) => eprintln!("Failed to purge note: {}", e),
         },
+        Commands::Unarchive { arg_id } => match unarchive_note(conn, &arg_id) {
+            Ok(note) => println!("{:?}", note),
+            Err(e) => eprintln!("Failed to un-archive note: {}", e),
+        },
+        Commands::Restore { arg_id } => match restore_note(conn, &arg_id) {
+            Ok(note) => println!("{:?}", note),
+            Err(e) => eprintln!("Failed to restore note: {}", e),
+        },
     }
 }
