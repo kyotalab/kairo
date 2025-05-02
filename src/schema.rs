@@ -36,9 +36,9 @@ diesel::table! {
 
 diesel::table! {
     tags (id) {
-        id -> Nullable<Text>,
+        id -> Text,
         tag_name -> Text,
-        created_at -> Nullable<Timestamp>,
+        created_at -> Timestamp,
         deleted -> Bool,
     }
 }
@@ -61,10 +61,4 @@ diesel::table! {
 diesel::joinable!(note_tags -> notes (note_id));
 diesel::joinable!(note_tags -> tags (tag_id));
 
-diesel::allow_tables_to_appear_in_same_query!(
-    note_tags,
-    notes,
-    projects,
-    tags,
-    tasks,
-);
+diesel::allow_tables_to_appear_in_same_query!(note_tags, notes, projects, tags, tasks,);
