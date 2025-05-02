@@ -27,6 +27,8 @@ pub enum NoteCommands {
         arg_project_id: Option<String>,
         #[arg(long = "tid")]
         arg_task_id: Option<String>,
+        #[arg(long = "tag")]
+        arg_tags: Option<Vec<String>>,
     },
     List {
         #[arg(long = "archived")]

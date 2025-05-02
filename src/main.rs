@@ -15,6 +15,7 @@ fn main() {
                 arg_sub_type,
                 arg_project_id,
                 arg_task_id,
+                arg_tags,
             } => {
                 match create_note(
                     conn,
@@ -23,6 +24,7 @@ fn main() {
                     &arg_sub_type,
                     arg_project_id,
                     arg_task_id,
+                    arg_tags,
                 ) {
                     Ok(note) => println!("{:?}", note),
                     Err(e) => eprintln!("Failed to create note: {}", e),

@@ -1,10 +1,13 @@
 use crate::models::{Note, NoteType, SubType};
+use crate::repository::*;
 use crate::schema::notes;
 use crate::schema::notes::dsl::*;
 use chrono::{NaiveDateTime, Utc};
 use diesel::SqliteConnection;
 use diesel::prelude::*;
 use diesel::result::Error;
+
+use super::get_tag_by_name;
 
 // ==============================
 // ▼ Structs / Create
@@ -70,6 +73,7 @@ pub fn create_note(
     input_sub_type: &str,
     input_project_id: Option<String>,
     input_task_id: Option<String>,
+    input_tag_names: Option<Vec<String>>,
 ) -> Result<Note, Error> {
     let validated_note_type = parse_note_type(&input_note_type)?;
     let validated_sub_type = parse_sub_type(&input_sub_type)?;
@@ -87,10 +91,28 @@ pub fn create_note(
         task_id: input_task_id,
     };
 
-    diesel::insert_into(notes::table)
+    // Note を保存
+    let note = diesel::insert_into(notes::table)
         .values(&new_note)
-        .returning(Note::as_select()) // Diesel 2.x
-        .get_result(conn)
+        .returning(Note::as_select())
+        .get_result(conn)?;
+
+    // Tag と NoteTag の保存処理
+    if let Some(tag_names) = input_tag_names {
+        for name in tag_names {
+            // タグ取得または作成
+            let tag = match get_tag_by_name(conn, name.clone()) {
+                Ok(Some(existing)) => existing,
+                Ok(None) => create_tag(conn, name.clone())?,
+                Err(e) => return Err(e),
+            };
+
+            // note_tag を作成
+            create_note_tag(conn, &note.id, &tag.id)?;
+        }
+    }
+
+    Ok(note)
 }
 
 // ==============================
