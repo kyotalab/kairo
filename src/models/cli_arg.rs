@@ -8,6 +8,14 @@ pub struct Cli {
 
 #[derive(Debug, Subcommand)]
 pub enum Commands {
+    Note {
+        #[command(subcommand)]
+        command: NoteCommands,
+    },
+}
+
+#[derive(Debug, Subcommand)]
+pub enum NoteCommands {
     Create {
         #[arg(short = 't', long = "title")]
         arg_title: String,
