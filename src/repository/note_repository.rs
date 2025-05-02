@@ -6,7 +6,9 @@ use diesel::SqliteConnection;
 use diesel::prelude::*;
 use diesel::result::Error;
 
-// Create用
+// ==============================
+// ▼ Structs / Create
+// ==============================
 #[derive(Insertable)]
 #[diesel(table_name = notes)]
 pub struct NewNote {
@@ -22,7 +24,9 @@ pub struct NewNote {
     pub task_id: Option<String>,
 }
 
-// Update用
+// ==============================
+// ▼ Structs / Update
+// ==============================
 #[derive(AsChangeset)]
 #[diesel(table_name = notes)]
 pub struct UpdatedNote {
@@ -34,9 +38,175 @@ pub struct UpdatedNote {
     pub task_id: Option<String>,
 }
 
-// ==========================================================================-
-pub fn create_note_id() -> String {
+// ==============================
+// ▼ Structs / Archive
+// ==============================
+#[derive(AsChangeset)]
+#[diesel(table_name = notes)]
+pub struct ArchivedNote {
+    pub archived: bool,
+}
+
+// ==============================
+// ▼ Structs / SoftDelete
+// ==============================
+#[derive(AsChangeset)]
+#[diesel(table_name = notes)]
+pub struct SoftDeletedNote {
+    pub deleted: bool,
+}
+
+// ==============================
+// ▼ Create / Insert
+// ==============================
+fn generate_note_id() -> String {
     Utc::now().format("%Y%m%dT%H%M%S").to_string()
+}
+
+pub fn create_note(
+    conn: &mut SqliteConnection,
+    input_title: String,
+    input_note_type: &str,
+    input_sub_type: &str,
+    input_project_id: Option<String>,
+    input_task_id: Option<String>,
+) -> Result<Note, Error> {
+    let validated_note_type = parse_note_type(&input_note_type)?;
+    let validated_sub_type = parse_sub_type(&input_sub_type)?;
+
+    let new_note = NewNote {
+        id: generate_note_id(),
+        title: input_title,
+        note_type: validated_note_type,
+        sub_type: validated_sub_type,
+        created_at: Utc::now().naive_utc(),
+        updated_at: Utc::now().naive_utc(),
+        archived: false,
+        deleted: false,
+        project_id: input_project_id,
+        task_id: input_task_id,
+    };
+
+    diesel::insert_into(notes::table)
+        .values(&new_note)
+        .returning(Note::as_select()) // Diesel 2.x
+        .get_result(conn)
+}
+
+// ==============================
+// ▼ Read / Select
+// ==============================
+pub fn list_notes(
+    conn: &mut SqliteConnection,
+    include_archived: bool,
+    include_deleted: bool,
+) -> Result<Vec<Note>, Error> {
+    let mut query = notes.into_boxed();
+
+    if !include_archived && !include_deleted {
+        query = query.filter(archived.eq(false)).filter(deleted.eq(false));
+    } else if include_archived && !include_deleted {
+        query = query.filter(archived.eq(true)).filter(deleted.eq(false));
+    } else if !include_archived && include_deleted {
+        query = query.filter(archived.eq(false)).filter(deleted.eq(true));
+    } else {
+        return Err(Error::QueryBuilderError(
+            "Invalid combination: archived=true AND deleted=true".into(),
+        ));
+    }
+
+    Ok(query
+        .select(Note::as_select())
+        .order(created_at.desc())
+        .load(conn)?)
+}
+
+pub fn get_note_by_id(conn: &mut SqliteConnection, note_id: &str) -> Result<Option<Note>, Error> {
+    let note = notes
+        .find(note_id)
+        .select(Note::as_select())
+        .first(conn)
+        .optional()?;
+
+    Ok(note)
+}
+
+// ==============================
+// ▼ Update
+// ==============================
+pub fn update_note(
+    conn: &mut SqliteConnection,
+    note_id: &str,
+    updated_title: String,
+    updated_note_type: &str,
+    updated_sub_type: &str,
+    updated_project_id: Option<String>,
+    updated_task_id: Option<String>,
+) -> Result<Note, Error> {
+    let validated_note_type = parse_note_type(&updated_note_type)?;
+    let validated_sub_type = parse_sub_type(&updated_sub_type)?;
+
+    let updated_note = UpdatedNote {
+        title: updated_title,
+        note_type: validated_note_type,
+        sub_type: validated_sub_type,
+        updated_at: Utc::now().naive_utc(),
+        project_id: updated_project_id,
+        task_id: updated_task_id,
+    };
+
+    diesel::update(notes.find(note_id))
+        .set(updated_note)
+        .returning(Note::as_select())
+        .get_result(conn)
+}
+
+pub fn archive_note(conn: &mut SqliteConnection, note_id: &str) -> Result<Note, Error> {
+    let exist_note = ensure_note_exists(conn, note_id)?;
+
+    if exist_note.archived {
+        return Err(Error::QueryBuilderError("Note is already archived".into()));
+    }
+
+    diesel::update(notes.find(note_id))
+        .set(ArchivedNote { archived: true })
+        .returning(Note::as_select())
+        .get_result(conn)
+}
+
+// ==============================
+// ▼ Delete
+// ==============================
+pub fn soft_delete_note(conn: &mut SqliteConnection, note_id: &str) -> Result<Note, Error> {
+    let exist_note = ensure_note_exists(conn, note_id)?;
+
+    if exist_note.deleted {
+        return Err(Error::QueryBuilderError("Note is already deleted".into()));
+    }
+
+    diesel::update(notes.find(note_id))
+        .set(SoftDeletedNote { deleted: true })
+        .returning(Note::as_select())
+        .get_result(conn)
+}
+
+pub fn delete_note(conn: &mut SqliteConnection, note_id: &str) -> Result<(), Error> {
+    let _exist_note = ensure_note_exists(conn, note_id)?;
+    diesel::delete(notes.find(note_id))
+        .returning(Note::as_select())
+        .get_result(conn)?;
+
+    Ok(())
+}
+
+// ==============================
+// ▼ Internal Common Utils
+// ==============================
+fn ensure_note_exists(conn: &mut SqliteConnection, note_id: &str) -> Result<Note, Error> {
+    match get_note_by_id(conn, note_id)? {
+        Some(note) => Ok(note),
+        None => Err(Error::QueryBuilderError("Note not found".into())),
+    }
 }
 
 fn parse_note_type(input: &str) -> Result<NoteType, Error> {
@@ -63,100 +233,4 @@ fn parse_sub_type(input: &str) -> Result<Option<SubType>, Error> {
             format!("Invalid sub_type: {}", other).into(),
         )),
     }
-}
-
-// ==========================================================================-
-pub fn create_note(
-    conn: &mut SqliteConnection,
-    input_title: String,
-    input_note_type: &str,
-    input_sub_type: &str,
-    input_project_id: Option<String>,
-    input_task_id: Option<String>,
-) -> Result<Note, Error> {
-    let validated_note_type = parse_note_type(&input_note_type)?;
-    let validated_sub_type = parse_sub_type(&input_sub_type)?;
-
-    let new_note = NewNote {
-        id: create_note_id(),
-        title: input_title,
-        note_type: validated_note_type,
-        sub_type: validated_sub_type,
-        created_at: Utc::now().naive_utc(),
-        updated_at: Utc::now().naive_utc(),
-        archived: false,
-        deleted: false,
-        project_id: input_project_id,
-        task_id: input_task_id,
-    };
-
-    diesel::insert_into(notes::table)
-        .values(&new_note)
-        .returning(Note::as_select()) // Diesel 2.x
-        .get_result(conn)
-}
-
-// ==========================================================================-
-pub fn list_notes(
-    conn: &mut SqliteConnection,
-    include_archived: bool,
-    include_deleted: bool,
-) -> Result<Vec<Note>, Error> {
-    let mut query = notes.into_boxed();
-
-    if !include_archived && !include_deleted {
-        query = query.filter(archived.eq(false)).filter(deleted.eq(false));
-    } else if include_archived && !include_deleted {
-        query = query.filter(archived.eq(true)).filter(deleted.eq(false));
-    } else if !include_archived && include_deleted {
-        query = query.filter(archived.eq(false)).filter(deleted.eq(true));
-    } else {
-        return Err(Error::QueryBuilderError(
-            "Invalid combination: archived=true AND deleted=true".into(),
-        ));
-    }
-
-    Ok(query
-        .select(Note::as_select())
-        .order(created_at.desc())
-        .load(conn)?)
-}
-
-// ==========================================================================-
-pub fn get_note_by_id(conn: &mut SqliteConnection, note_id: &str) -> Result<Option<Note>, Error> {
-    let note = notes
-        .find(note_id)
-        .select(Note::as_select())
-        .first(conn)
-        .optional()?;
-
-    Ok(note)
-}
-
-// ==========================================================================-
-pub fn update_note(
-    conn: &mut SqliteConnection,
-    note_id: &str,
-    updated_title: String,
-    updated_note_type: &str,
-    updated_sub_type: &str,
-    updated_project_id: Option<String>,
-    updated_task_id: Option<String>,
-) -> Result<Note, Error> {
-    let validated_note_type = parse_note_type(&updated_note_type)?;
-    let validated_sub_type = parse_sub_type(&updated_sub_type)?;
-
-    let updated_note = UpdatedNote {
-        title: updated_title,
-        note_type: validated_note_type,
-        sub_type: validated_sub_type,
-        updated_at: Utc::now().naive_utc(),
-        project_id: updated_project_id,
-        task_id: updated_task_id,
-    };
-
-    diesel::update(notes.find(note_id))
-        .set(updated_note)
-        .returning(Note::as_select())
-        .get_result(conn)
 }

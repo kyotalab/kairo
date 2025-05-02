@@ -68,4 +68,28 @@ fn main() {
     );
 
     println!("{:?}", updated_note);
+
+    // =====================================================================
+    // archive note by id test
+    let archive_id = "20250502T021227";
+    let archived_note = archive_note(connection, archive_id);
+
+    println!("{:?}", archived_note);
+
+    // let archived_note2 = archive_note(connection, archive_id);
+    // println!("{:?}", archived_note2);
+
+    // =====================================================================
+    // soft delete note by id test
+    let soft_delete_id = "20250502T002021";
+    let soft_deleted_note = soft_delete_note(connection, soft_delete_id);
+
+    println!("{:?}", soft_deleted_note);
+
+    // =====================================================================
+    // delete note by id test
+    let delete_id = "20250502T002021";
+    let deleted_note = delete_note(connection, delete_id);
+
+    println!("{:?}", deleted_note);
 }
