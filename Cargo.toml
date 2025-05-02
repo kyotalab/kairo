@@ -8,3 +8,5 @@ diesel = { version = "2.2.0", features = ["sqlite", "returning_clauses_for_sqlit
 dotenvy = "0.15"
 chrono = { version = "0.4.23", features = ["serde"] }
 diesel-derive-enum = { version = "2.1.0", features = ["sqlite"] }
+
+libsqlite3-sys = { version = "*", features = ["bundled"] }
