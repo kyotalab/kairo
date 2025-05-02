@@ -1,95 +1,88 @@
+use clap::Parser;
+use kairo::models::{Cli, Commands};
 use kairo::repository::*;
 
 fn main() {
-    let connection = &mut establish_connection();
+    let conn = &mut establish_connection();
 
-    // =====================================================================
-    // Insert note test
-    let input_title = String::from("The project: Rust CLI Kairo");
-    let input_note_type = "fleeting";
-    let input_sub_type = "idea";
-    let input_project_id = String::new();
-    let input_task_id = String::new();
+    let cli = Cli::parse();
 
-    let note = create_note(
-        connection,
-        input_title,
-        &input_note_type,
-        &input_sub_type,
-        Some(input_project_id),
-        Some(input_task_id),
-    );
-    println!("{:?}", note);
-
-    // =====================================================================
-    // list notes test
-    match list_notes(connection, false, false) {
-        Ok(notes) => {
-            for note in notes {
+    match cli.command {
+        Commands::Create {
+            arg_title,
+            arg_note_type,
+            arg_sub_type,
+            arg_project_id,
+            arg_task_id,
+        } => {
+            match create_note(
+                conn,
+                arg_title,
+                &arg_note_type,
+                &arg_sub_type,
+                arg_project_id,
+                arg_task_id,
+            ) {
+                Ok(note) => println!("{:?}", note),
+                Err(e) => eprintln!("Failed to create note: {}", e),
+            };
+        }
+        Commands::List {
+            arg_archived,
+            arg_deleted,
+        } => match list_notes(conn, arg_archived, arg_deleted) {
+            Ok(notes) => {
+                for note in notes {
+                    println!("{:?}", note);
+                }
+            }
+            Err(e) => {
+                eprintln!("Failed to fetch notes: {}", e);
+            }
+        },
+        Commands::Get { arg_id } => match get_note_by_id(conn, &arg_id) {
+            Ok(Some(note)) => {
                 println!("{:?}", note);
             }
+            Ok(None) => {
+                println!("Note not found");
+            }
+            Err(e) => {
+                println!("Database error: {:?}", e);
+            }
+        },
+        Commands::Update {
+            arg_id,
+            arg_title,
+            arg_note_type,
+            arg_sub_type,
+            arg_project_id,
+            arg_task_id,
+        } => {
+            match update_note(
+                conn,
+                &arg_id,
+                arg_title,
+                arg_note_type,
+                arg_sub_type,
+                arg_project_id,
+                arg_task_id,
+            ) {
+                Ok(note) => println!("{:?}", note),
+                Err(e) => eprintln!("Failed to update note: {}", e),
+            }
         }
-        Err(e) => {
-            eprintln!("Failed to fetch notes: {}", e);
-        }
+        Commands::Archive { arg_id } => match archive_note(conn, &arg_id) {
+            Ok(note) => println!("{:?}", note),
+            Err(e) => eprintln!("Failed to archive note: {}", e),
+        },
+        Commands::Delete { arg_id } => match soft_delete_note(conn, &arg_id) {
+            Ok(note) => println!("{:?}", note),
+            Err(e) => eprintln!("Failed to delete note: {}", e),
+        },
+        Commands::Purge { arg_id } => match delete_note(conn, &arg_id) {
+            Ok(note) => println!("{:?}", note),
+            Err(e) => eprintln!("Failed to purge note: {}", e),
+        },
     }
-
-    // =====================================================================
-    // get note by id test
-    let search_id = "20250502T002021";
-    match get_note_by_id(connection, search_id) {
-        Ok(Some(note)) => {
-            println!("{:?}", note);
-        }
-        Ok(None) => {
-            println!("Note not found");
-        }
-        Err(e) => {
-            println!("Database error: {:?}", e);
-        }
-    }
-
-    // =====================================================================
-    // update note by id test
-    let updated_title = String::from("Changed title");
-    let updated_note_type = "permanent";
-    let updated_sub_type = "question";
-    let updated_project_id = String::new();
-    let updated_task_id = String::new();
-
-    let updated_note = update_note(
-        connection,
-        search_id,
-        updated_title,
-        &updated_note_type,
-        &updated_sub_type,
-        Some(updated_project_id),
-        Some(updated_task_id),
-    );
-
-    println!("{:?}", updated_note);
-
-    // =====================================================================
-    // archive note by id test
-    let archive_id = "20250502T021227";
-    let archived_note = archive_note(connection, archive_id);
-
-    println!("{:?}", archived_note);
-
-    // let archived_note2 = archive_note(connection, archive_id);
-    // println!("{:?}", archived_note2);
-
-    // =====================================================================
-    // soft delete note by id test
-    let soft_delete_id = "20250502T002021";
-    let soft_deleted_note = soft_delete_note(connection, soft_delete_id);
-
-    println!("{:?}", soft_deleted_note);
-
-    // =====================================================================
-    // delete note by id test
-    let delete_id = "20250502T002021";
-    let deleted_note = delete_note(connection, delete_id);
-
-    println!("{:?}", deleted_note);
 }

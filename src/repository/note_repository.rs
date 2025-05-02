@@ -30,7 +30,7 @@ pub struct NewNote {
 #[derive(AsChangeset)]
 #[diesel(table_name = notes)]
 pub struct UpdatedNote {
-    pub title: String,
+    pub title: Option<String>,
     pub note_type: NoteType,
     pub sub_type: Option<SubType>,
     pub updated_at: NaiveDateTime,
@@ -98,21 +98,33 @@ pub fn create_note(
 // ==============================
 pub fn list_notes(
     conn: &mut SqliteConnection,
-    include_archived: bool,
-    include_deleted: bool,
+    include_archived: Option<bool>,
+    include_deleted: Option<bool>,
 ) -> Result<Vec<Note>, Error> {
     let mut query = notes.into_boxed();
 
-    if !include_archived && !include_deleted {
-        query = query.filter(archived.eq(false)).filter(deleted.eq(false));
-    } else if include_archived && !include_deleted {
-        query = query.filter(archived.eq(true)).filter(deleted.eq(false));
-    } else if !include_archived && include_deleted {
-        query = query.filter(archived.eq(false)).filter(deleted.eq(true));
-    } else {
-        return Err(Error::QueryBuilderError(
-            "Invalid combination: archived=true AND deleted=true".into(),
-        ));
+    match (
+        include_archived.unwrap_or(false),
+        include_deleted.unwrap_or(false),
+    ) {
+        (false, false) => {
+            // 通常表示（Activeなノートのみ）
+            query = query.filter(archived.eq(false)).filter(deleted.eq(false));
+        }
+        (true, false) => {
+            // アーカイブ済のみ
+            query = query.filter(archived.eq(true)).filter(deleted.eq(false));
+        }
+        (false, true) => {
+            // 削除済のみ
+            query = query.filter(archived.eq(false)).filter(deleted.eq(true));
+        }
+        (true, true) => {
+            // 禁止：両方trueは「ありえない状態」
+            return Err(Error::QueryBuilderError(
+                "Invalid combination: archived=true AND deleted=true".into(),
+            ));
+        }
     }
 
     Ok(query
@@ -137,14 +149,23 @@ pub fn get_note_by_id(conn: &mut SqliteConnection, note_id: &str) -> Result<Opti
 pub fn update_note(
     conn: &mut SqliteConnection,
     note_id: &str,
-    updated_title: String,
-    updated_note_type: &str,
-    updated_sub_type: &str,
+    updated_title: Option<String>,
+    updated_note_type: Option<String>,
+    updated_sub_type: Option<String>,
     updated_project_id: Option<String>,
     updated_task_id: Option<String>,
 ) -> Result<Note, Error> {
-    let validated_note_type = parse_note_type(&updated_note_type)?;
-    let validated_sub_type = parse_sub_type(&updated_sub_type)?;
+    let exist_note = ensure_note_exists(conn, note_id)?;
+
+    let validated_note_type = match updated_note_type {
+        Some(exist) => parse_note_type(&exist)?,
+        None => exist_note.note_type,
+    };
+
+    let validated_sub_type = match updated_sub_type {
+        Some(exist) => parse_sub_type(&exist)?,
+        None => exist_note.sub_type,
+    };
 
     let updated_note = UpdatedNote {
         title: updated_title,
