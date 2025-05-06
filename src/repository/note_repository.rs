@@ -180,14 +180,18 @@ pub fn update_note(
     let exist_note = ensure_note_exists(conn, note_id)?;
 
     let validated_note_type = match updated_note_type {
-        Some(exist) => parse_note_type(&exist)?,
+        Some(ref exist) => parse_note_type(exist)?,
         None => exist_note.note_type,
     };
 
     let validated_sub_type = match updated_sub_type {
-        Some(exist) => parse_sub_type(&exist)?,
+        Some(ref exist) => parse_sub_type(exist)?,
         None => exist_note.sub_type,
     };
+
+    if let Some(ref pid) = updated_project_id {
+        ensure_project_exists(conn, pid)?;
+    }
 
     let updated_note = UpdatedNote {
         title: updated_title,

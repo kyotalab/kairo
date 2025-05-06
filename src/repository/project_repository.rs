@@ -251,7 +251,10 @@ pub fn restore_project(conn: &mut SqliteConnection, project_id: &str) -> Result<
 // ==============================
 // ▼ Internal Common Utils
 // ==============================
-fn ensure_project_exists(conn: &mut SqliteConnection, project_id: &str) -> Result<Project, Error> {
+pub fn ensure_project_exists(
+    conn: &mut SqliteConnection,
+    project_id: &str,
+) -> Result<Project, Error> {
     match get_project_by_id(conn, project_id)? {
         Some(project) => Ok(project),
         None => Err(Error::QueryBuilderError("Project not found".into())),
