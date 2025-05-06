@@ -8,9 +8,7 @@ pub struct Project {
     pub id: String,
     pub title: String,
     pub description: Option<String>,
-    #[diesel(sql_type = Timestamp)]
     pub created_at: NaiveDateTime,
-    #[diesel(sql_type = Timestamp)]
     pub updated_at: NaiveDateTime,
     pub archived: bool,
     pub deleted: bool,

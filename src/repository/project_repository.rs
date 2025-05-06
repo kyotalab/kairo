@@ -59,7 +59,7 @@ fn generate_project_id(conn: &mut SqliteConnection) -> Result<String, diesel::re
     // タグIDの最大数値部分を取得
     let all_ids: Vec<String> = projects.select(id).load::<String>(conn)?;
 
-    // 正規表現で "t-001" 形式の数字部分を抽出して最大値を見つける
+    // 正規表現で "p-001" 形式の数字部分を抽出して最大値を見つける
     let re = Regex::new(r"p-(\d{3})").unwrap();
     let max_num = all_ids
         .iter()

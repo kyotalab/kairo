@@ -77,6 +77,9 @@ pub fn create_note(
 ) -> Result<Note, Error> {
     let validated_note_type = parse_note_type(&input_note_type)?;
     let validated_sub_type = parse_sub_type(&input_sub_type)?;
+    if let Some(ref pid) = input_project_id {
+        ensure_project_exists(conn, pid)?;
+    }
 
     let new_note = NewNote {
         id: generate_note_id(),
