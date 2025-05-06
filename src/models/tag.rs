@@ -7,7 +7,6 @@ use diesel::prelude::*;
 pub struct Tag {
     pub id: String,
     pub tag_name: String,
-    #[diesel(sql_type = Timestamp)]
     pub created_at: NaiveDateTime,
     pub deleted: bool,
 }

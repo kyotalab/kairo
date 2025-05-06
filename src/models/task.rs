@@ -24,9 +24,7 @@ pub struct Task {
     pub description: Option<String>,
     pub priority: Option<TaskPriority>,
     pub due_date: Option<NaiveDateTime>,
-    #[diesel(sql_type = Timestamp)]
     pub created_at: NaiveDateTime,
-    #[diesel(sql_type = Timestamp)]
     pub updated_at: NaiveDateTime,
     pub archived: bool,
     pub deleted: bool,

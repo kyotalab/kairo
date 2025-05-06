@@ -34,9 +34,7 @@ pub struct Note {
     pub title: String,
     pub note_type: NoteType,
     pub sub_type: Option<SubType>,
-    #[diesel(sql_type = Timestamp)]
     pub created_at: NaiveDateTime,
-    #[diesel(sql_type = Timestamp)]
     pub updated_at: NaiveDateTime,
     pub archived: bool,
     pub deleted: bool,
