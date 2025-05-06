@@ -220,6 +220,35 @@ pub fn delete_project(conn: &mut SqliteConnection, project_id: &str) -> Result<(
 }
 
 // ==============================
+// ▼ Unarchive / Restore
+// ==============================
+pub fn unarchive_project(conn: &mut SqliteConnection, project_id: &str) -> Result<Project, Error> {
+    let archived_project = ensure_project_exists(conn, project_id)?;
+
+    if !archived_project.archived {
+        return Err(Error::QueryBuilderError("Project is not archived".into()));
+    }
+
+    diesel::update(projects.find(project_id))
+        .set(ArchivedProject { archived: false })
+        .returning(Project::as_select())
+        .get_result(conn)
+}
+
+pub fn restore_project(conn: &mut SqliteConnection, project_id: &str) -> Result<Project, Error> {
+    let deleted_project = ensure_project_exists(conn, project_id)?;
+
+    if !deleted_project.deleted {
+        return Err(Error::QueryBuilderError("Project is not deleted".into()));
+    }
+
+    diesel::update(projects.find(project_id))
+        .set(DeletedProject { deleted: false })
+        .returning(Project::as_select())
+        .get_result(conn)
+}
+
+// ==============================
 // ▼ Internal Common Utils
 // ==============================
 fn ensure_project_exists(conn: &mut SqliteConnection, project_id: &str) -> Result<Project, Error> {

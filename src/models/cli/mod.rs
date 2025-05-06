@@ -1,8 +1,9 @@
 pub mod note_cli;
-
-use note_cli::NoteCommands;
+pub mod project_cli;
 
 use clap::{Parser, Subcommand};
+use note_cli::NoteCommands;
+use project_cli::ProjectCommands;
 
 #[derive(Debug, Parser)]
 pub struct Cli {
@@ -16,5 +17,9 @@ pub enum Commands {
     Note {
         #[command(subcommand)]
         command: NoteCommands,
+    },
+    Project {
+        #[command(subcommand)]
+        command: ProjectCommands,
     },
 }
