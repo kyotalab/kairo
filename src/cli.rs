@@ -6,5 +6,6 @@ pub fn dispatch(cli: Cli) {
         Commands::Note { command } => handlers::handle_note_command(command),
         Commands::Project { command } => handlers::handle_project_command(command),
         Commands::Task { command } => handlers::handle_task_command(command),
+        Commands::Tag { command } => handlers::handle_tag_command(command),
     }
 }

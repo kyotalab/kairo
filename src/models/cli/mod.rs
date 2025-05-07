@@ -1,10 +1,12 @@
 pub mod note_cli;
 pub mod project_cli;
+pub mod tag_cli;
 pub mod task_cli;
 
 use clap::{Parser, Subcommand};
 use note_cli::NoteCommands;
 use project_cli::ProjectCommands;
+use tag_cli::TagCommands;
 use task_cli::TaskCommands;
 
 #[derive(Debug, Parser)]
@@ -27,5 +29,9 @@ pub enum Commands {
     Task {
         #[command(subcommand)]
         command: TaskCommands,
+    },
+    Tag {
+        #[command(subcommand)]
+        command: TagCommands,
     },
 }

@@ -79,8 +79,16 @@ pub fn create_tag(conn: &mut SqliteConnection, input_tag_name: String) -> Result
 // ==============================
 // ▼ Read / Select
 // ==============================
-pub fn list_tags(conn: &mut SqliteConnection) -> Result<Vec<Tag>, Error> {
-    let query = tags.into_boxed();
+pub fn list_tags(
+    conn: &mut SqliteConnection,
+    include_deleted: Option<bool>,
+) -> Result<Vec<Tag>, Error> {
+    let mut query = tags.into_boxed();
+
+    match include_deleted.unwrap_or(false) {
+        false => query = query.filter(deleted.eq(false)),
+        true => query = query.filter(deleted.eq(true)),
+    }
 
     Ok(query
         .select(Tag::as_select())
