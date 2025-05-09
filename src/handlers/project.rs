@@ -1,4 +1,4 @@
-use crate::models::cli::project_cli::ProjectCommands;
+use crate::commands::project::ProjectCommands;
 use crate::repository::*;
 
 pub fn handle_project_command(command: ProjectCommands) {

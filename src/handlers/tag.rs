@@ -1,4 +1,4 @@
-use crate::models::cli::tag_cli::TagCommands;
+use crate::commands::tag::TagCommands;
 use crate::repository::*;
 
 pub fn handle_tag_command(command: TagCommands) {

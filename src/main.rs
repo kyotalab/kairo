@@ -1,6 +1,6 @@
 use clap::Parser;
 use kairo::cli;
-use kairo::models::Cli;
+use kairo::commands::Cli;
 
 fn main() {
     let cli = Cli::parse();

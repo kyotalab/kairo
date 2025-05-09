@@ -1,5 +1,5 @@
+use crate::commands::{Cli, Commands};
 use crate::handlers::{self};
-use crate::models::{Cli, Commands};
 
 pub fn dispatch(cli: Cli) {
     match cli.command {

@@ -1,4 +1,3 @@
-pub mod cli;
 pub mod linked_note;
 pub mod note;
 pub mod note_tag;
@@ -6,7 +5,6 @@ pub mod project;
 pub mod tag;
 pub mod task;
 
-pub use cli::*;
 pub use linked_note::*;
 pub use note::*;
 pub use note_tag::*;

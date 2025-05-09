@@ -1,11 +1,11 @@
-pub mod linked_note_handler;
-pub mod note_handler;
-pub mod project_handler;
-pub mod tag_handler;
-pub mod task_handler;
+pub mod linked_note;
+pub mod note;
+pub mod project;
+pub mod tag;
+pub mod task;
 
-pub use linked_note_handler::*;
-pub use note_handler::*;
-pub use project_handler::*;
-pub use tag_handler::*;
-pub use task_handler::*;
+pub use linked_note::*;
+pub use note::*;
+pub use project::*;
+pub use tag::*;
+pub use task::*;

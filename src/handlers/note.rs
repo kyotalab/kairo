@@ -1,4 +1,4 @@
-use crate::models::cli::note_cli::NoteCommands;
+use crate::commands::note::NoteCommands;
 use crate::repository::*;
 
 pub fn handle_note_command(command: NoteCommands) {

@@ -1,15 +1,15 @@
 pub mod db;
-pub mod linked_note_repository;
-pub mod note_repository;
-pub mod note_tag_repository;
-pub mod project_repository;
-pub mod tag_repository;
-pub mod task_repository;
+pub mod linked_note;
+pub mod note;
+pub mod note_tag;
+pub mod project;
+pub mod tag;
+pub mod task;
 
 pub use db::*;
-pub use linked_note_repository::*;
-pub use note_repository::*;
-pub use note_tag_repository::*;
-pub use project_repository::*;
-pub use tag_repository::*;
-pub use task_repository::*;
+pub use linked_note::*;
+pub use note::*;
+pub use note_tag::*;
+pub use project::*;
+pub use tag::*;
+pub use task::*;

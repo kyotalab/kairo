@@ -1,4 +1,4 @@
-use crate::models::cli::linked_note_cli::LinkCommands;
+use crate::commands::linked_note::LinkCommands;
 use crate::repository::*;
 
 pub fn handle_link_command(command: LinkCommands) {

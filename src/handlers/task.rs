@@ -1,4 +1,4 @@
-use crate::models::cli::task_cli::TaskCommands;
+use crate::commands::task::TaskCommands;
 use crate::repository::*;
 
 pub fn handle_task_command(command: TaskCommands) {

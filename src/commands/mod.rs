@@ -1,15 +1,15 @@
-pub mod linked_note_cli;
-pub mod note_cli;
-pub mod project_cli;
-pub mod tag_cli;
-pub mod task_cli;
+pub mod linked_note;
+pub mod note;
+pub mod project;
+pub mod tag;
+pub mod task;
 
 use clap::{Parser, Subcommand};
-use linked_note_cli::LinkCommands;
-use note_cli::NoteCommands;
-use project_cli::ProjectCommands;
-use tag_cli::TagCommands;
-use task_cli::TaskCommands;
+use linked_note::LinkCommands;
+use note::NoteCommands;
+use project::ProjectCommands;
+use tag::TagCommands;
+use task::TaskCommands;
 
 #[derive(Debug, Parser)]
 pub struct Cli {
