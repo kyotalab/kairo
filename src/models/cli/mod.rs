@@ -1,9 +1,11 @@
+pub mod linked_note_cli;
 pub mod note_cli;
 pub mod project_cli;
 pub mod tag_cli;
 pub mod task_cli;
 
 use clap::{Parser, Subcommand};
+use linked_note_cli::LinkCommands;
 use note_cli::NoteCommands;
 use project_cli::ProjectCommands;
 use tag_cli::TagCommands;
@@ -33,5 +35,9 @@ pub enum Commands {
     Tag {
         #[command(subcommand)]
         command: TagCommands,
+    },
+    Link {
+        #[command(subcommand)]
+        command: LinkCommands,
     },
 }
