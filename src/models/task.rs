@@ -1,4 +1,5 @@
 use crate::schema::tasks;
+use crate::traits::markdown::MarkdownExportable;
 use chrono::NaiveDateTime;
 use diesel::backend::Backend;
 use diesel::deserialize::{FromSql, FromSqlRow};
@@ -7,8 +8,9 @@ use diesel::prelude::*;
 use diesel::serialize::{Output, ToSql};
 use diesel::sql_types::Text;
 use diesel::sqlite::Sqlite;
+use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, AsExpression, FromSqlRow)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, AsExpression, FromSqlRow, Serialize, Deserialize)]
 #[diesel(sql_type = Text)]
 pub enum TaskPriority {
     Low,
@@ -16,7 +18,7 @@ pub enum TaskPriority {
     High,
 }
 
-#[derive(Queryable, Selectable, Debug, Clone)]
+#[derive(Queryable, Selectable, Debug, Clone, Serialize, Deserialize)]
 #[diesel(table_name = tasks)]
 pub struct Task {
     pub id: String,
@@ -60,5 +62,15 @@ impl FromSql<Text, Sqlite> for TaskPriority {
             "high" => Ok(TaskPriority::High),
             other => Err(format!("Unrecognized TaskPriority variant: {}", other).into()),
         }
+    }
+}
+
+impl MarkdownExportable for Task {
+    fn id(&self) -> &str {
+        &self.id
+    }
+
+    fn title(&self) -> &str {
+        &self.title
     }
 }

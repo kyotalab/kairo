@@ -1,8 +1,10 @@
 use crate::commands::task::TaskCommands;
+use crate::config::AppConfig;
 use crate::repository::*;
+use crate::utils::write_to_markdown;
 use diesel::SqliteConnection;
 
-pub fn handle_task_command(command: TaskCommands, conn: &mut SqliteConnection) {
+pub fn handle_task_command(command: TaskCommands, conn: &mut SqliteConnection, config: &AppConfig) {
     match command {
         TaskCommands::Create {
             arg_title,
@@ -18,7 +20,14 @@ pub fn handle_task_command(command: TaskCommands, conn: &mut SqliteConnection) {
             arg_due_date,
             arg_project_id,
         ) {
-            Ok(task) => println!("{:?}", task),
+            Ok(task) => {
+                let dir = &config.paths.tasks_dir;
+                println!("{:?}", task);
+                if let Err(e) = write_to_markdown(&task, dir) {
+                    eprintln!("Failed to write task: {}", e)
+                }
+                println!("Run `kairo tui` to open dashboard")
+            }
             Err(e) => eprintln!("Failed to create task: {}", e),
         },
         TaskCommands::List {

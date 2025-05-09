@@ -5,4 +5,5 @@ pub mod handlers;
 pub mod models;
 pub mod repository;
 pub mod schema;
+pub mod traits;
 pub mod utils;

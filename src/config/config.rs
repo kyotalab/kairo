@@ -11,4 +11,5 @@ pub struct PathsConfig {
     pub db_path: String,
     pub notes_dir: String,
     pub projects_dir: String,
+    pub tasks_dir: String,
 }

@@ -1,7 +1,7 @@
 use crate::commands::note::NoteCommands;
 use crate::config::AppConfig;
 use crate::repository::*;
-use crate::utils::write_note_to_markdown;
+use crate::utils::write_to_markdown;
 use diesel::SqliteConnection;
 
 pub fn handle_note_command(command: NoteCommands, conn: &mut SqliteConnection, config: &AppConfig) {
@@ -26,7 +26,7 @@ pub fn handle_note_command(command: NoteCommands, conn: &mut SqliteConnection, c
                 Ok(note) => {
                     let dir = &config.paths.notes_dir;
                     println!("{:?}", note);
-                    if let Err(e) = write_note_to_markdown(&note, dir) {
+                    if let Err(e) = write_to_markdown(&note, dir) {
                         eprintln!("Failed to write note: {}", e)
                     }
                     println!("Run `kairo tui` to open dashboard")

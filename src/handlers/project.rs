@@ -1,14 +1,27 @@
 use crate::commands::project::ProjectCommands;
+use crate::config::AppConfig;
 use crate::repository::*;
+use crate::utils::write_to_markdown;
 use diesel::SqliteConnection;
 
-pub fn handle_project_command(command: ProjectCommands, conn: &mut SqliteConnection) {
+pub fn handle_project_command(
+    command: ProjectCommands,
+    conn: &mut SqliteConnection,
+    config: &AppConfig,
+) {
     match command {
         ProjectCommands::Create {
             arg_title,
             arg_description,
         } => match create_project(conn, arg_title, arg_description) {
-            Ok(project) => println!("{:?}", project),
+            Ok(project) => {
+                let dir = &config.paths.projects_dir;
+                println!("{:?}", project);
+                if let Err(e) = write_to_markdown(&project, dir) {
+                    eprintln!("Failed to write project: {}", e)
+                }
+                println!("Run `kairo tui` to open dashboard")
+            }
             Err(e) => eprintln!("Failed to create project: {}", e),
         },
         ProjectCommands::List {

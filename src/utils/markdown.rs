@@ -1,21 +1,25 @@
-use crate::models::Note;
+use crate::traits::markdown::MarkdownExportable;
+use serde::Serialize;
 use std::fs;
 use std::io;
 
-pub fn write_note_to_markdown(note: &Note, dir: &str) -> Result<(), io::Error> {
-    let serialized_note = serde_yaml::to_string(&note).map_err(|e| {
+pub fn write_to_markdown<T>(item: &T, dir: &str) -> Result<(), io::Error>
+where
+    T: MarkdownExportable + Serialize,
+{
+    let serialized = serde_yaml::to_string(&item).map_err(|e| {
         io::Error::new(
             io::ErrorKind::Other,
             format!("YAML serialization failed: {e}"),
         )
     })?;
 
-    let frontmatter = format!("---\n{}---\n\n## {}\n\n", serialized_note, note.title);
-    let file_path = format!("{}/{}.md", dir, note.id);
+    let content = format!("---\n{}---\n\n## {}\n\n", serialized, item.title());
+    let path = format!("{}/{}.md", dir, item.id());
 
-    fs::create_dir_all(dir)?; // フォルダがない場合に作成
-    fs::write(&file_path, frontmatter)?;
+    fs::create_dir_all(dir)?;
+    fs::write(&path, content)?;
 
-    println!("✅ Markdown saved to {}.md", note.id);
+    println!("✅ Markdown saved to {}.md", item.id());
     Ok(())
 }
