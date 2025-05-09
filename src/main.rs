@@ -13,5 +13,5 @@ fn main() {
     let conn = &mut establish_connection(&config);
 
     let cli = Cli::parse();
-    cli::dispatch(cli, conn);
+    cli::dispatch(cli, conn, &config);
 }

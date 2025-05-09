@@ -1,8 +1,10 @@
 use crate::commands::note::NoteCommands;
+use crate::config::AppConfig;
 use crate::repository::*;
+use crate::utils::write_note_to_markdown;
 use diesel::SqliteConnection;
 
-pub fn handle_note_command(command: NoteCommands, conn: &mut SqliteConnection) {
+pub fn handle_note_command(command: NoteCommands, conn: &mut SqliteConnection, config: &AppConfig) {
     match command {
         NoteCommands::Create {
             arg_title,
@@ -21,7 +23,14 @@ pub fn handle_note_command(command: NoteCommands, conn: &mut SqliteConnection) {
                 arg_task_id,
                 arg_tags,
             ) {
-                Ok(note) => println!("{:?}", note),
+                Ok(note) => {
+                    let dir = &config.paths.notes_dir;
+                    println!("{:?}", note);
+                    if let Err(e) = write_note_to_markdown(&note, dir) {
+                        eprintln!("Failed to write note: {}", e)
+                    }
+                    println!("Run `kairo tui` to open dashboard")
+                }
                 Err(e) => eprintln!("Failed to create note: {}", e),
             };
         }
