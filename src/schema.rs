@@ -1,6 +1,17 @@
 // @generated automatically by Diesel CLI.
 
 diesel::table! {
+    linked_notes (id) {
+        id -> Text,
+        from_id -> Text,
+        to_id -> Text,
+        link_type -> Nullable<Text>,
+        created_at -> Timestamp,
+        deleted -> Bool,
+    }
+}
+
+diesel::table! {
     note_tags (note_id, tag_id) {
         note_id -> Text,
         tag_id -> Text,
@@ -61,4 +72,11 @@ diesel::table! {
 diesel::joinable!(note_tags -> notes (note_id));
 diesel::joinable!(note_tags -> tags (tag_id));
 
-diesel::allow_tables_to_appear_in_same_query!(note_tags, notes, projects, tags, tasks,);
+diesel::allow_tables_to_appear_in_same_query!(
+    linked_notes,
+    note_tags,
+    notes,
+    projects,
+    tags,
+    tasks,
+);
