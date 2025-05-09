@@ -1,9 +1,8 @@
 use crate::commands::linked_note::LinkCommands;
 use crate::repository::*;
+use diesel::SqliteConnection;
 
-pub fn handle_link_command(command: LinkCommands) {
-    let conn = &mut establish_connection();
-
+pub fn handle_link_command(command: LinkCommands, conn: &mut SqliteConnection) {
     match command {
         LinkCommands::Create {
             arg_from,

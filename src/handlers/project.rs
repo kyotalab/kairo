@@ -1,9 +1,8 @@
 use crate::commands::project::ProjectCommands;
 use crate::repository::*;
+use diesel::SqliteConnection;
 
-pub fn handle_project_command(command: ProjectCommands) {
-    let conn = &mut establish_connection();
-
+pub fn handle_project_command(command: ProjectCommands, conn: &mut SqliteConnection) {
     match command {
         ProjectCommands::Create {
             arg_title,

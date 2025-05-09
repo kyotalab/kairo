@@ -1,9 +1,8 @@
 use crate::commands::tag::TagCommands;
 use crate::repository::*;
+use diesel::SqliteConnection;
 
-pub fn handle_tag_command(command: TagCommands) {
-    let conn = &mut establish_connection();
-
+pub fn handle_tag_command(command: TagCommands, conn: &mut SqliteConnection) {
     match command {
         TagCommands::Create { arg_tag_name } => match create_tag(conn, arg_tag_name) {
             Ok(tag) => println!("{:?}", tag),

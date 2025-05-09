@@ -1,9 +1,8 @@
 use crate::commands::note::NoteCommands;
 use crate::repository::*;
+use diesel::SqliteConnection;
 
-pub fn handle_note_command(command: NoteCommands) {
-    let conn = &mut establish_connection();
-
+pub fn handle_note_command(command: NoteCommands, conn: &mut SqliteConnection) {
     match command {
         NoteCommands::Create {
             arg_title,

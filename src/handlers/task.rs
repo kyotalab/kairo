@@ -1,9 +1,8 @@
 use crate::commands::task::TaskCommands;
 use crate::repository::*;
+use diesel::SqliteConnection;
 
-pub fn handle_task_command(command: TaskCommands) {
-    let conn = &mut establish_connection();
-
+pub fn handle_task_command(command: TaskCommands, conn: &mut SqliteConnection) {
     match command {
         TaskCommands::Create {
             arg_title,
