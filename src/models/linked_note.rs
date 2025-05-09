@@ -32,7 +32,7 @@ pub struct LinkedNote {
 impl ToSql<Text, Sqlite> for LinkType {
     fn to_sql<'b>(&'b self, out: &mut Output<'b, '_, Sqlite>) -> diesel::serialize::Result {
         let value = match self {
-            LinkType::Structure => "fleeting",
+            LinkType::Structure => "structure",
             LinkType::Reference => "reference",
             LinkType::Support => "support",
             LinkType::Related => "related",
