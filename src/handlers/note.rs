@@ -26,6 +26,7 @@ pub fn handle_note_command(command: NoteCommands, conn: &mut SqliteConnection, c
                 Ok(note) => {
                     let dir = &config.paths.notes_dir;
                     println!("{:?}", note);
+                    // TODO tagsを含むフロントマターを出力できるように変更する。
                     if let Err(e) = write_to_markdown(&note, dir) {
                         eprintln!("Failed to write note: {}", e)
                     }
@@ -37,6 +38,7 @@ pub fn handle_note_command(command: NoteCommands, conn: &mut SqliteConnection, c
         NoteCommands::List {
             arg_archived,
             arg_deleted,
+            // TODO note list --tagで指定のタグを含むノートを表示できるようにする。[[../command/note.rs]]
         } => match list_notes(conn, arg_archived, arg_deleted) {
             Ok(notes) => {
                 for note in notes {

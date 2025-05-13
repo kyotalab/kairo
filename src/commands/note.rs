@@ -21,6 +21,7 @@ pub enum NoteCommands {
         arg_archived: Option<bool>,
         #[arg(long = "deleted")]
         arg_deleted: Option<bool>,
+        // TODO note list --tagで指定のタグを含むノートを表示できるようにする。[[../handlers/note.rs]]
     },
     Get {
         #[arg(long = "id")]
