@@ -1,7 +1,6 @@
 use crate::config::AppConfig;
 use config::{Config, ConfigError, File};
 use etcetera::{BaseStrategy, choose_base_strategy};
-// use std::path::PathBuf;
 
 pub fn load_config() -> Result<AppConfig, ConfigError> {
     // Documentでconfigパスを限定することが前提
