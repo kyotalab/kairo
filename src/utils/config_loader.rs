@@ -1,25 +1,21 @@
 use crate::config::AppConfig;
 use config::{Config, ConfigError, File};
-use std::path::PathBuf;
+use etcetera::{BaseStrategy, choose_base_strategy};
+// use std::path::PathBuf;
 
 pub fn load_config() -> Result<AppConfig, ConfigError> {
-    let mut builder = Config::builder();
+    // Documentでconfigパスを限定することが前提
 
-    // 優先順位: カレントディレクトリ > ユーザー設定 > システム全体
-    let config_paths = vec![
-        Some(PathBuf::from("./config.toml")),
-        dirs::config_dir().map(|p| p.join("kairo/config.toml")),
-        Some(PathBuf::from("/etc/kairo/config.toml")),
-    ];
+    let strategy = choose_base_strategy().expect("Unable to find the config directory!");
+    let mut path = strategy.config_dir();
+    path.push("kairo");
+    path.push("config.toml");
 
-    for path_opt in config_paths {
-        if let Some(path) = path_opt {
-            if path.exists() {
-                builder = builder.add_source(File::from(path));
-                break;
-            }
-        }
+    if !path.exists() {
+        eprintln!("No config file found at: {}", path.display());
     }
+
+    let builder = Config::builder().add_source(File::from(path));
 
     builder.build()?.try_deserialize()
 }
