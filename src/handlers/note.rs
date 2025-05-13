@@ -27,6 +27,13 @@ pub fn handle_note_command(command: NoteCommands, conn: &mut SqliteConnection, c
                     let dir = &config.paths.notes_dir;
                     println!("{:?}", note);
                     // TODO tagsを含むフロントマターを出力できるように変更する。
+                    /* 1. フロントマター出力用の「NoteFrontMatter」構造体を（Note構造体フィールド + tags: Vec<String>）定義する。
+                     * 2. Getterトレイトの実装をNoteFrontMatterに変更する。
+                     * 3. 以下のSQL文を処理するget_tags_by_note_id関数を実装する。
+                     * SELECT note_tags.note_id, note_tags.tag_id, tags.tag_name FROM note_tags
+                     *    INNER JOIN tags ON tags.id = nt.tag_id
+                     *    WHERE nt.note_id = note.id;
+                     */
                     if let Err(e) = write_to_markdown(&note, dir) {
                         eprintln!("Failed to write note: {}", e)
                     }
