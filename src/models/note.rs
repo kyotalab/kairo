@@ -1,5 +1,4 @@
 use crate::schema::notes;
-use crate::traits::markdown::MarkdownExportable;
 use chrono::NaiveDateTime;
 use diesel::backend::Backend;
 use diesel::deserialize::{FromSql, FromSqlRow};
@@ -97,15 +96,5 @@ impl FromSql<Text, Sqlite> for SubType {
             "quote" => Ok(SubType::Quote),
             other => Err(format!("Unrecognized NoteType variant: {}", other).into()),
         }
-    }
-}
-
-impl MarkdownExportable for Note {
-    fn id(&self) -> &str {
-        &self.id
-    }
-
-    fn title(&self) -> &str {
-        &self.title
     }
 }
