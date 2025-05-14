@@ -17,9 +17,9 @@ pub fn handle_project_command(
             Ok(project) => {
                 let dir = &config.paths.projects_dir;
                 println!("{:?}", project);
-                if let Err(e) = write_to_markdown(&project, dir) {
-                    eprintln!("Failed to write project: {}", e)
-                }
+                // if let Err(e) = write_to_markdown(&project, dir) {
+                //     eprintln!("Failed to write project: {}", e)
+                // }
                 println!("Run `kairo tui` to open dashboard")
             }
             Err(e) => eprintln!("Failed to create project: {}", e),

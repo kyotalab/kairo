@@ -1,5 +1,4 @@
 use crate::schema::tasks;
-use crate::traits::markdown::MarkdownExportable;
 use chrono::NaiveDateTime;
 use diesel::backend::Backend;
 use diesel::deserialize::{FromSql, FromSqlRow};
@@ -62,15 +61,5 @@ impl FromSql<Text, Sqlite> for TaskPriority {
             "high" => Ok(TaskPriority::High),
             other => Err(format!("Unrecognized TaskPriority variant: {}", other).into()),
         }
-    }
-}
-
-impl MarkdownExportable for Task {
-    fn id(&self) -> &str {
-        &self.id
-    }
-
-    fn title(&self) -> &str {
-        &self.title
     }
 }
