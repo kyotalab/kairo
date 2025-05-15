@@ -37,7 +37,7 @@ pub fn handle_note_command(command: NoteCommands, conn: &mut SqliteConnection, c
         }
         NoteCommands::Get { arg_id } => {
             if let Err(e) = handle_get_note(conn, arg_id) {
-                eprintln!("Failed to get notes: {}", e);
+                eprintln!("Failed to get note: {}", e);
             }
         }
         NoteCommands::Update {
