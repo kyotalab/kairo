@@ -62,6 +62,13 @@ diesel::table! {
 }
 
 diesel::table! {
+    task_tags (task_id, tag_id) {
+        task_id -> Text,
+        tag_id -> Text,
+    }
+}
+
+diesel::table! {
     tasks (id) {
         id -> Text,
         title -> Text,
@@ -80,6 +87,8 @@ diesel::joinable!(note_tags -> notes (note_id));
 diesel::joinable!(note_tags -> tags (tag_id));
 diesel::joinable!(project_tags -> projects (project_id));
 diesel::joinable!(project_tags -> tags (tag_id));
+diesel::joinable!(task_tags -> tags (tag_id));
+diesel::joinable!(task_tags -> tasks (task_id));
 
 diesel::allow_tables_to_appear_in_same_query!(
     linked_notes,
@@ -88,5 +97,6 @@ diesel::allow_tables_to_appear_in_same_query!(
     project_tags,
     projects,
     tags,
+    task_tags,
     tasks,
 );
