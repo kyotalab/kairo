@@ -13,6 +13,8 @@ pub enum TaskCommands {
         arg_due_date: Option<String>,
         #[arg(long = "pid")]
         arg_project_id: Option<String>,
+        #[arg(long = "tag")]
+        arg_tags: Option<Vec<String>>,
     },
     List {
         #[arg(long = "archived")]

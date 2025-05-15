@@ -1,5 +1,6 @@
 use crate::commands::task::TaskCommands;
 use crate::config::AppConfig;
+use crate::frontmatters::TaskFrontMatter;
 use crate::repository::*;
 use crate::utils::write_to_markdown;
 use diesel::SqliteConnection;
@@ -12,6 +13,7 @@ pub fn handle_task_command(command: TaskCommands, conn: &mut SqliteConnection, c
             arg_priority,
             arg_due_date,
             arg_project_id,
+            arg_tags,
         } => match create_task(
             conn,
             arg_title,
@@ -19,13 +21,22 @@ pub fn handle_task_command(command: TaskCommands, conn: &mut SqliteConnection, c
             arg_priority,
             arg_due_date,
             arg_project_id,
+            arg_tags,
         ) {
             Ok(task) => {
                 let dir = &config.paths.tasks_dir;
                 println!("{:?}", task);
-                // if let Err(e) = write_to_markdown(&task, dir) {
-                //     eprintln!("Failed to write task: {}", e)
-                // }
+
+                let tags = get_tags_by_task_id(conn, &task.id).unwrap();
+                let tags_str = tags.into_iter().map(|t| t.tag_name).collect();
+
+                let front_matter = TaskFrontMatter {
+                    item: task,
+                    tags: tags_str,
+                };
+                if let Err(e) = write_to_markdown(&front_matter, dir) {
+                    eprintln!("Failed to write task: {}", e)
+                }
                 println!("Run `kairo tui` to open dashboard")
             }
             Err(e) => eprintln!("Failed to create task: {}", e),

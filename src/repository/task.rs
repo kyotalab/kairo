@@ -89,6 +89,7 @@ pub fn create_task(
     input_task_priority: Option<String>,
     input_due_date: Option<String>,
     input_project_id: Option<String>,
+    input_tag_names: Option<Vec<String>>,
 ) -> Result<Task, Error> {
     let task_id = generate_task_id(conn)?;
     let validated_task_priority = parse_task_priority(input_task_priority)?;
@@ -108,10 +109,27 @@ pub fn create_task(
         project_id: input_project_id,
     };
 
-    diesel::insert_into(tasks::table)
+    let task = diesel::insert_into(tasks::table)
         .values(&new_task)
         .returning(Task::as_select())
-        .get_result(conn)
+        .get_result(conn)?;
+
+    // Tag と ProjectTag の保存処理
+    if let Some(tag_names) = input_tag_names {
+        for name in tag_names {
+            // タグ取得または作成
+            let tag = match get_tag_by_name(conn, name.clone()) {
+                Ok(Some(existing)) => existing,
+                Ok(None) => create_tag(conn, name.clone())?,
+                Err(e) => return Err(e),
+            };
+
+            // note_tag を作成
+            create_task_tag(conn, &task.id, &tag.id)?;
+        }
+    }
+
+    Ok(task)
 }
 
 // ==============================

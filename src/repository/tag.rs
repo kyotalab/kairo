@@ -3,6 +3,7 @@ use crate::schema::note_tags;
 use crate::schema::project_tags;
 use crate::schema::tags;
 use crate::schema::tags::dsl::*;
+use crate::schema::task_tags;
 use chrono::{NaiveDateTime, Utc};
 use diesel::SqliteConnection;
 use diesel::prelude::*;
@@ -142,6 +143,16 @@ pub fn get_tags_by_project_id(
         .load::<Tag>(conn)?;
 
     Ok(project_tags)
+}
+
+pub fn get_tags_by_task_id(conn: &mut SqliteConnection, task_id: &str) -> Result<Vec<Tag>, Error> {
+    let task_tags = task_tags::table
+        .inner_join(tags::table.on(task_tags::tag_id.eq(tags::id)))
+        .filter(task_tags::task_id.eq(task_id))
+        .select(tags::all_columns)
+        .load::<Tag>(conn)?;
+
+    Ok(task_tags)
 }
 
 // ==============================
