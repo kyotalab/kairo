@@ -1,13 +1,9 @@
-use crate::model::Tag;
-use crate::schema::note_tags;
-use crate::schema::project_tags;
-use crate::schema::tags;
-use crate::schema::tags::dsl::*;
-use crate::schema::task_tags;
+use crate::{
+    model::Tag,
+    schema::{note_tags, project_tags, tags, tags::dsl::*, task_tags},
+};
 use chrono::{NaiveDateTime, Utc};
-use diesel::SqliteConnection;
-use diesel::prelude::*;
-use diesel::result::Error;
+use diesel::{SqliteConnection, prelude::*, result::Error};
 
 // ==============================
 // ▼ Structs / Create

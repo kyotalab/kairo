@@ -1,5 +1,7 @@
-use crate::interface::{HasItem, MarkdownExportable};
-use crate::model::Task;
+use crate::{
+    interface::{HasItem, MarkdownExportable},
+    model::Task,
+};
 use serde::Serialize;
 
 #[derive(Debug, Serialize)]

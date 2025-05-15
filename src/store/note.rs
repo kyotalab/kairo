@@ -1,11 +1,11 @@
-use crate::model::{Note, NoteType, SubType};
-use crate::schema::notes;
-use crate::schema::notes::dsl::*;
-use crate::store::*;
+use crate::{
+    model::{Note, NoteType, SubType},
+    schema::notes,
+    schema::notes::dsl::*,
+    store::*,
+};
 use chrono::{NaiveDateTime, Utc};
-use diesel::SqliteConnection;
-use diesel::prelude::*;
-use diesel::result::Error;
+use diesel::{SqliteConnection, prelude::*, result::Error};
 
 use super::get_tag_by_name;
 

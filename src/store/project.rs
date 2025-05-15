@@ -1,11 +1,6 @@
-use crate::model::Project;
-use crate::schema::projects;
-use crate::schema::projects::dsl::*;
-use crate::store::*;
+use crate::{model::Project, schema::projects, schema::projects::dsl::*, store::*};
 use chrono::{NaiveDateTime, Utc};
-use diesel::SqliteConnection;
-use diesel::prelude::*;
-use diesel::result::Error;
+use diesel::{SqliteConnection, prelude::*, result::Error};
 
 // ==============================
 // ▼ Structs / Create

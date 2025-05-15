@@ -1,5 +1,4 @@
-use crate::commands::linked_note::LinkCommands;
-use crate::store::*;
+use crate::{commands::linked_note::LinkCommands, store::*};
 use diesel::SqliteConnection;
 
 pub fn handle_link_command(command: LinkCommands, conn: &mut SqliteConnection) {

@@ -1,8 +1,5 @@
-use crate::model::TaskTag;
-use crate::schema::task_tags;
-use diesel::SqliteConnection;
-use diesel::prelude::*;
-use diesel::result::Error;
+use crate::{model::TaskTag, schema::task_tags};
+use diesel::{SqliteConnection, prelude::*, result::Error};
 
 // ==============================
 // ▼ Structs / Create

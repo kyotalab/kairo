@@ -1,12 +1,14 @@
 use crate::schema::tasks;
 use chrono::NaiveDateTime;
-use diesel::backend::Backend;
-use diesel::deserialize::{FromSql, FromSqlRow};
-use diesel::expression::*;
-use diesel::prelude::*;
-use diesel::serialize::{Output, ToSql};
-use diesel::sql_types::Text;
-use diesel::sqlite::Sqlite;
+use diesel::{
+    backend::Backend,
+    deserialize::{FromSql, FromSqlRow},
+    expression::*,
+    prelude::*,
+    serialize::{Output, ToSql},
+    sql_types::Text,
+    sqlite::Sqlite,
+};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, AsExpression, FromSqlRow, Serialize, Deserialize)]

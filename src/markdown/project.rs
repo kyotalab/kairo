@@ -1,5 +1,7 @@
-use crate::interface::{HasItem, MarkdownExportable};
-use crate::model::Project;
+use crate::{
+    interface::{HasItem, MarkdownExportable},
+    model::Project,
+};
 use serde::Serialize;
 
 #[derive(Debug, Serialize)]

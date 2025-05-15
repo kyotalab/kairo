@@ -1,8 +1,5 @@
 use clap::Parser;
-use kairo::cli;
-use kairo::commands::Cli;
-use kairo::store::db::establish_connection;
-use kairo::util::load_config;
+use kairo::{cli, commands::Cli, store::db::establish_connection, util::load_config};
 
 fn main() {
     let config = load_config().unwrap_or_else(|e| {

@@ -1,6 +1,8 @@
-use crate::commands::{Cli, Commands};
-use crate::config::AppConfig;
-use crate::handler::{self};
+use crate::{
+    commands::{Cli, Commands},
+    config::AppConfig,
+    handler::{self},
+};
 use diesel::SqliteConnection;
 
 pub fn dispatch(cli: Cli, conn: &mut SqliteConnection, config: &AppConfig) {

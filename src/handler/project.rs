@@ -1,6 +1,4 @@
-use crate::commands::project::ProjectCommands;
-use crate::config::AppConfig;
-use crate::usecase::*;
+use crate::{commands::project::ProjectCommands, config::AppConfig, usecase::*};
 use diesel::SqliteConnection;
 
 pub fn handle_project_command(

@@ -1,11 +1,11 @@
-use crate::model::{Task, TaskPriority};
-use crate::schema::tasks;
-use crate::schema::tasks::dsl::*;
-use crate::store::*;
+use crate::{
+    model::{Task, TaskPriority},
+    schema::tasks,
+    schema::tasks::dsl::*,
+    store::*,
+};
 use chrono::{NaiveDate, NaiveDateTime, Utc};
-use diesel::SqliteConnection;
-use diesel::prelude::*;
-use diesel::result::Error;
+use diesel::{SqliteConnection, prelude::*, result::Error};
 
 // ==============================
 // ▼ Structs / Create

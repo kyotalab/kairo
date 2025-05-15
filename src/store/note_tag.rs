@@ -1,8 +1,5 @@
-use crate::model::NoteTag;
-use crate::schema::note_tags;
-use diesel::SqliteConnection;
-use diesel::prelude::*;
-use diesel::result::Error;
+use crate::{model::NoteTag, schema::note_tags};
+use diesel::{SqliteConnection, prelude::*, result::Error};
 
 // ==============================
 // ▼ Structs / Create

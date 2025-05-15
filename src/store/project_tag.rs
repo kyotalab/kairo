@@ -1,8 +1,5 @@
-use crate::model::ProjectTag;
-use crate::schema::project_tags;
-use diesel::SqliteConnection;
-use diesel::prelude::*;
-use diesel::result::Error;
+use crate::{model::ProjectTag, schema::project_tags};
+use diesel::{SqliteConnection, prelude::*, result::Error};
 
 // ==============================
 // ▼ Structs / Create

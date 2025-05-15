@@ -19,7 +19,6 @@ pub struct Cli {
 
 #[derive(Debug, Subcommand)]
 pub enum Commands {
-    // ここにProjectCommands, TaskCommandsを追加する!!
     Note {
         #[command(subcommand)]
         command: NoteCommands,

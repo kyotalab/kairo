@@ -1,6 +1,4 @@
-use crate::commands::note::NoteCommands;
-use crate::config::AppConfig;
-use crate::usecase::note::*;
+use crate::{commands::note::NoteCommands, config::AppConfig, usecase::note::*};
 use diesel::SqliteConnection;
 
 pub fn handle_note_command(command: NoteCommands, conn: &mut SqliteConnection, config: &AppConfig) {

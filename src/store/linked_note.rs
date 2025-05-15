@@ -1,10 +1,9 @@
-use crate::model::{LinkType, LinkedNote};
-use crate::schema::linked_notes;
-use crate::schema::linked_notes::dsl::*;
+use crate::{
+    model::{LinkType, LinkedNote},
+    schema::{linked_notes, linked_notes::dsl::*},
+};
 use chrono::{NaiveDateTime, Utc};
-use diesel::SqliteConnection;
-use diesel::prelude::*;
-use diesel::result::Error;
+use diesel::{SqliteConnection, prelude::*, result::Error};
 
 // ==============================
 // ▼ Structs / Create
