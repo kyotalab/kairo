@@ -1,8 +1,8 @@
 use crate::commands::task::TaskCommands;
 use crate::config::AppConfig;
-use crate::frontmatters::TaskFrontMatter;
-use crate::repository::*;
-use crate::utils::write_to_markdown;
+use crate::markdown::TaskFrontMatter;
+use crate::store::*;
+use crate::util::write_to_markdown;
 use diesel::SqliteConnection;
 
 pub fn handle_task_command(command: TaskCommands, conn: &mut SqliteConnection, config: &AppConfig) {

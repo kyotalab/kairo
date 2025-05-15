@@ -1,8 +1,8 @@
 use crate::commands::note::NoteCommands;
 use crate::config::AppConfig;
-use crate::frontmatters::note::NoteFrontMatter;
-use crate::repository::*;
-use crate::utils::write_to_markdown;
+use crate::markdown::note::NoteFrontMatter;
+use crate::store::*;
+use crate::util::write_to_markdown;
 use diesel::SqliteConnection;
 
 pub fn handle_note_command(command: NoteCommands, conn: &mut SqliteConnection, config: &AppConfig) {

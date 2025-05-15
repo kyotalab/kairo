@@ -1,7 +1,7 @@
-use crate::models::{Task, TaskPriority};
-use crate::repository::*;
+use crate::model::{Task, TaskPriority};
 use crate::schema::tasks;
 use crate::schema::tasks::dsl::*;
+use crate::store::*;
 use chrono::{NaiveDate, NaiveDateTime, Utc};
 use diesel::SqliteConnection;
 use diesel::prelude::*;

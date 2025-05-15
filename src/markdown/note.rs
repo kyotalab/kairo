@@ -1,16 +1,16 @@
-use crate::models::Project;
-use crate::traits::{HasItem, MarkdownExportable};
+use crate::interface::{HasItem, MarkdownExportable};
+use crate::model::Note;
 use serde::Serialize;
 
 #[derive(Debug, Serialize)]
-pub struct ProjectFrontMatter {
+pub struct NoteFrontMatter {
     #[serde(flatten)]
-    pub item: Project,
+    pub item: Note,
     pub tags: Vec<String>,
 }
 
-impl MarkdownExportable<Project> for ProjectFrontMatter {
-    fn get_item(&self) -> &Project {
+impl MarkdownExportable<Note> for NoteFrontMatter {
+    fn get_item(&self) -> &Note {
         &self.item
     }
 
@@ -19,7 +19,7 @@ impl MarkdownExportable<Project> for ProjectFrontMatter {
     }
 }
 
-impl HasItem for Project {
+impl HasItem for Note {
     fn id(&self) -> &str {
         &self.id
     }

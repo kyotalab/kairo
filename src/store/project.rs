@@ -1,7 +1,7 @@
-use crate::models::Project;
-use crate::repository::*;
+use crate::model::Project;
 use crate::schema::projects;
 use crate::schema::projects::dsl::*;
+use crate::store::*;
 use chrono::{NaiveDateTime, Utc};
 use diesel::SqliteConnection;
 use diesel::prelude::*;

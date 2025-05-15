@@ -1,5 +1,4 @@
-use crate::traits::HasItem;
-use crate::traits::markdown::MarkdownExportable;
+use crate::interface::{HasItem, MarkdownExportable};
 use serde::Serialize;
 use std::fs;
 use std::io;

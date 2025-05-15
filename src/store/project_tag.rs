@@ -1,4 +1,4 @@
-use crate::models::ProjectTag;
+use crate::model::ProjectTag;
 use crate::schema::project_tags;
 use diesel::SqliteConnection;
 use diesel::prelude::*;

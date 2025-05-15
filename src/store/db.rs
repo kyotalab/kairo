@@ -1,8 +1,5 @@
-use diesel::prelude::*;
-// use dotenvy::dotenv;
-// use std::env;
-
 use crate::config::AppConfig;
+use diesel::prelude::*;
 
 pub fn establish_connection(config: &AppConfig) -> SqliteConnection {
     // dotenv().ok();

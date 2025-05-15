@@ -1,5 +1,5 @@
 use crate::commands::tag::TagCommands;
-use crate::repository::*;
+use crate::store::*;
 use diesel::SqliteConnection;
 
 pub fn handle_tag_command(command: TagCommands, conn: &mut SqliteConnection) {

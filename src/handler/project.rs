@@ -1,8 +1,8 @@
 use crate::commands::project::ProjectCommands;
 use crate::config::AppConfig;
-use crate::frontmatters::ProjectFrontMatter;
-use crate::repository::*;
-use crate::utils::write_to_markdown;
+use crate::markdown::ProjectFrontMatter;
+use crate::store::*;
+use crate::util::write_to_markdown;
 use diesel::SqliteConnection;
 
 pub fn handle_project_command(

@@ -1,5 +1,5 @@
-use crate::models::TaskTag;
-use crate::schema::task_tags;
+use crate::model::NoteTag;
+use crate::schema::note_tags;
 use diesel::SqliteConnection;
 use diesel::prelude::*;
 use diesel::result::Error;
@@ -8,27 +8,27 @@ use diesel::result::Error;
 // ▼ Structs / Create
 // ==============================
 #[derive(Insertable)]
-#[diesel(table_name = task_tags)]
-pub struct NewTaskTag {
-    pub task_id: String,
+#[diesel(table_name = note_tags)]
+pub struct NewNoteTag {
+    pub note_id: String,
     pub tag_id: String,
 }
 
 // ==============================
 // ▼ Create / Insert
 // ==============================
-pub fn create_task_tag(
+pub fn create_note_tag(
     conn: &mut SqliteConnection,
-    input_task_id: &str,
+    input_note_id: &str,
     input_tag_id: &str,
-) -> Result<TaskTag, Error> {
-    let new_task_tag = NewTaskTag {
-        task_id: input_task_id.to_string(),
+) -> Result<NoteTag, Error> {
+    let new_note_tag = NewNoteTag {
+        note_id: input_note_id.to_string(),
         tag_id: input_tag_id.to_string(),
     };
 
-    diesel::insert_into(task_tags::table)
-        .values(&new_task_tag)
-        .returning(TaskTag::as_select())
+    diesel::insert_into(note_tags::table)
+        .values(&new_note_tag)
+        .returning(NoteTag::as_select())
         .get_result(conn)
 }

@@ -1,7 +1,7 @@
-use crate::models::{Note, NoteType, SubType};
-use crate::repository::*;
+use crate::model::{Note, NoteType, SubType};
 use crate::schema::notes;
 use crate::schema::notes::dsl::*;
+use crate::store::*;
 use chrono::{NaiveDateTime, Utc};
 use diesel::SqliteConnection;
 use diesel::prelude::*;

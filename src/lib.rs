@@ -1,10 +1,10 @@
 pub mod cli;
 pub mod commands;
 pub mod config;
-pub mod frontmatters;
-pub mod handlers;
-pub mod models;
-pub mod repository;
+pub mod handler;
+pub mod interface;
+pub mod markdown;
+pub mod model;
 pub mod schema;
-pub mod traits;
-pub mod utils;
+pub mod store;
+pub mod util;

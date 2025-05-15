@@ -1,16 +1,16 @@
-use crate::models::Task;
-use crate::traits::{HasItem, MarkdownExportable};
+use crate::interface::{HasItem, MarkdownExportable};
+use crate::model::Project;
 use serde::Serialize;
 
 #[derive(Debug, Serialize)]
-pub struct TaskFrontMatter {
+pub struct ProjectFrontMatter {
     #[serde(flatten)]
-    pub item: Task,
+    pub item: Project,
     pub tags: Vec<String>,
 }
 
-impl MarkdownExportable<Task> for TaskFrontMatter {
-    fn get_item(&self) -> &Task {
+impl MarkdownExportable<Project> for ProjectFrontMatter {
+    fn get_item(&self) -> &Project {
         &self.item
     }
 
@@ -19,7 +19,7 @@ impl MarkdownExportable<Task> for TaskFrontMatter {
     }
 }
 
-impl HasItem for Task {
+impl HasItem for Project {
     fn id(&self) -> &str {
         &self.id
     }

@@ -1,4 +1,4 @@
-use crate::models::Tag;
+use crate::model::Tag;
 use crate::schema::note_tags;
 use crate::schema::project_tags;
 use crate::schema::tags;

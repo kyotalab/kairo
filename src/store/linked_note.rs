@@ -1,4 +1,4 @@
-use crate::models::{LinkType, LinkedNote};
+use crate::model::{LinkType, LinkedNote};
 use crate::schema::linked_notes;
 use crate::schema::linked_notes::dsl::*;
 use chrono::{NaiveDateTime, Utc};
