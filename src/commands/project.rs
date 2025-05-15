@@ -7,8 +7,8 @@ pub enum ProjectCommands {
         arg_title: String,
         #[arg(short = 'd', long = "description")]
         arg_description: Option<String>,
-        // #[arg(long = "tag")]
-        // arg_tags: Option<Vec<String>>,
+        #[arg(long = "tag")]
+        arg_tags: Option<Vec<String>>,
     },
     List {
         #[arg(long = "archived")]

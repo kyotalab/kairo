@@ -1,5 +1,6 @@
 use crate::models::Tag;
 use crate::schema::note_tags;
+use crate::schema::project_tags;
 use crate::schema::tags;
 use crate::schema::tags::dsl::*;
 use chrono::{NaiveDateTime, Utc};
@@ -128,6 +129,19 @@ pub fn get_tags_by_note_id(conn: &mut SqliteConnection, note_id: &str) -> Result
         .load::<Tag>(conn)?;
 
     Ok(note_tags)
+}
+
+pub fn get_tags_by_project_id(
+    conn: &mut SqliteConnection,
+    project_id: &str,
+) -> Result<Vec<Tag>, Error> {
+    let project_tags = project_tags::table
+        .inner_join(tags::table.on(project_tags::tag_id.eq(tags::id)))
+        .filter(project_tags::project_id.eq(project_id))
+        .select(tags::all_columns)
+        .load::<Tag>(conn)?;
+
+    Ok(project_tags)
 }
 
 // ==============================

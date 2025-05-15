@@ -1,4 +1,5 @@
 use crate::models::Project;
+use crate::repository::*;
 use crate::schema::projects;
 use crate::schema::projects::dsl::*;
 use chrono::{NaiveDateTime, Utc};
@@ -79,6 +80,7 @@ pub fn create_project(
     conn: &mut SqliteConnection,
     input_title: String,
     input_description: Option<String>,
+    input_tag_names: Option<Vec<String>>,
 ) -> Result<Project, Error> {
     let project_id = generate_project_id(conn)?;
 
@@ -92,10 +94,27 @@ pub fn create_project(
         deleted: false,
     };
 
-    diesel::insert_into(projects::table)
+    let project = diesel::insert_into(projects::table)
         .values(&new_project)
         .returning(Project::as_select())
-        .get_result(conn)
+        .get_result(conn)?;
+
+    // Tag と ProjectTag の保存処理
+    if let Some(tag_names) = input_tag_names {
+        for name in tag_names {
+            // タグ取得または作成
+            let tag = match get_tag_by_name(conn, name.clone()) {
+                Ok(Some(existing)) => existing,
+                Ok(None) => create_tag(conn, name.clone())?,
+                Err(e) => return Err(e),
+            };
+
+            // note_tag を作成
+            create_project_tag(conn, &project.id, &tag.id)?;
+        }
+    }
+
+    Ok(project)
 }
 
 // ==============================
