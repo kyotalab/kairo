@@ -1,8 +1,7 @@
-use crate::config::AppConfig;
-use crate::markdown::NoteFrontMatter;
-use crate::store::note::*;
-use crate::store::tag::get_tags_by_note_id;
-use crate::util::write_to_markdown;
+use crate::{
+    config::AppConfig, markdown::NoteFrontMatter, store::note::*, store::tag::get_tags_by_note_id,
+    util::write_to_markdown,
+};
 use anyhow::Ok;
 use diesel::SqliteConnection;
 

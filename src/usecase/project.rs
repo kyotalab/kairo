@@ -1,7 +1,4 @@
-use crate::config::AppConfig;
-use crate::markdown::ProjectFrontMatter;
-use crate::store::*;
-use crate::util::write_to_markdown;
+use crate::{config::AppConfig, markdown::ProjectFrontMatter, store::*, util::write_to_markdown};
 use anyhow::Ok;
 use diesel::SqliteConnection;
 
