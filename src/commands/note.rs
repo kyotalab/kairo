@@ -21,7 +21,10 @@ pub enum NoteCommands {
         arg_archived: Option<bool>,
         #[arg(long = "deleted")]
         arg_deleted: Option<bool>,
-        // TODO note list --tagで指定のタグを含むノートを表示できるようにする。[[../handlers/note.rs]]
+        /* TODO
+         *  1. note list --tagで指定のタグを含むノートを表示できるようにする。
+         *  2. 現状日付が降順でsortされているため、note list --order desc or ascで並び替えできるようにする。
+         */
     },
     Get {
         #[arg(long = "id")]
@@ -40,6 +43,9 @@ pub enum NoteCommands {
         arg_project_id: Option<String>,
         #[arg(long = "tid")]
         arg_task_id: Option<String>,
+        /* TODO
+         *  note update --tagでタグ更新はどうする？--tagが指定されなかった場合は、変更なし。--tagが指定されたときは、前のtagは削除して、新たに付け直す？
+         */
     },
     Archive {
         #[arg(long = "id")]

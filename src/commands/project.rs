@@ -15,6 +15,10 @@ pub enum ProjectCommands {
         arg_archived: Option<bool>,
         #[arg(long = "deleted")]
         arg_deleted: Option<bool>,
+        /* TODO
+         *  1. project list --tagで指定のタグを含むノートを表示できるようにする。
+         *  2. 現状日付が降順でsortされているため、project list --order desc or ascで並び替えできるようにする。
+         */
     },
     Get {
         #[arg(long = "id")]
@@ -27,6 +31,9 @@ pub enum ProjectCommands {
         arg_title: Option<String>,
         #[arg(short = 'd', long = "description")]
         arg_description: Option<String>,
+        /* TODO
+         *  task update --tagでタグ更新はどうする？--tagが指定されなかった場合は、変更なし。--tagが指定されたときは、前のtagは削除して、新たに付け直す？
+         */
     },
     Archive {
         #[arg(long = "id")]

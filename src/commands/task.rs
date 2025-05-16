@@ -21,6 +21,12 @@ pub enum TaskCommands {
         arg_archived: Option<bool>,
         #[arg(long = "deleted")]
         arg_deleted: Option<bool>,
+        /* TODO
+         *  1. task list --tagで指定のタグを含むノートを表示できるようにする。（これタスクには不要かも？）
+         *  2. 現状,日付が降順でsortされているため、note list --order desc or ascで並び替えできるようにする。この時の並び替えは「created_at or due_date」？
+         *  3. --priority で優先度でsortできるようにする。
+         *  4. --pid でプロジェクトでsortできるようにする。
+         */
     },
     Get {
         #[arg(long = "id")]
@@ -39,6 +45,9 @@ pub enum TaskCommands {
         arg_due_date: Option<String>,
         #[arg(long = "pid")]
         arg_project_id: Option<String>,
+        /* TODO
+         *  task update --tagでタグ更新はどうする？--tagが指定されなかった場合は、変更なし。--tagが指定されたときは、前のtagは削除して、新たに付け直す？
+         */
     },
     Archive {
         #[arg(long = "id")]
