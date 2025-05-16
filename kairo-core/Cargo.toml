@@ -1,0 +1,21 @@
+[package]
+name = "kairo-core"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+dotenvy = "0.15"
+chrono = { version = "0.4.23", features = ["serde"] }
+diesel-derive-enum = { version = "2.1.0", features = ["sqlite"] }
+regex = "1.11.1"
+config = "0.15.11"
+serde = { version = "1.0.129", features = ["derive"] }
+serde_yaml = "0.9.34"
+libsqlite3-sys = { version = "*", features = ["bundled"] }
+dirs = "6.0.0"
+etcetera = "0.10.0"
+anyhow = "1.0.98"
+
+
+clap = { version = "4.5.37", features = ["derive"] }
+diesel = { version = "2.2.0", features = ["sqlite", "returning_clauses_for_sqlite_3_35", "chrono"] }

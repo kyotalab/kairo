@@ -1,7 +1,7 @@
 use crate::{
     commands::{Cli, Commands},
-    config::AppConfig,
     handler::{self},
+    kairo_core::config::AppConfig,
 };
 use diesel::SqliteConnection;
 

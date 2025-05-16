@@ -1,5 +1,6 @@
-use crate::{commands::note::NoteCommands, config::AppConfig, usecase::note::*};
+use crate::commands::note::NoteCommands;
 use diesel::SqliteConnection;
+use kairo_core::{config::AppConfig, usecase::note::*};
 
 pub fn handle_note_command(command: NoteCommands, conn: &mut SqliteConnection, config: &AppConfig) {
     match command {

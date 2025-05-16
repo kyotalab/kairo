@@ -1,5 +1,6 @@
-use crate::{commands::tag::TagCommands, store::*};
+use crate::commands::tag::TagCommands;
 use diesel::SqliteConnection;
+use kairo_core::store::*;
 
 pub fn handle_tag_command(command: TagCommands, conn: &mut SqliteConnection) {
     match command {

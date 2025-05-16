@@ -1,4 +1,4 @@
-use crate::{commands::linked_note::LinkCommands, store::*};
+use crate::{commands::linked_note::LinkCommands, kairo_core::store::*};
 use diesel::SqliteConnection;
 
 pub fn handle_link_command(command: LinkCommands, conn: &mut SqliteConnection) {

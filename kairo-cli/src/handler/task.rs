@@ -1,7 +1,6 @@
 use crate::commands::task::TaskCommands;
-use crate::config::AppConfig;
-use crate::usecase::task::*;
 use diesel::SqliteConnection;
+use kairo_core::{config::AppConfig, usecase::task::*};
 
 pub fn handle_task_command(command: TaskCommands, conn: &mut SqliteConnection, config: &AppConfig) {
     match command {

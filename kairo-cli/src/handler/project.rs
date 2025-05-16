@@ -1,5 +1,6 @@
-use crate::{commands::project::ProjectCommands, config::AppConfig, usecase::*};
+use crate::commands::project::ProjectCommands;
 use diesel::SqliteConnection;
+use kairo_core::{config::AppConfig, usecase::project::*};
 
 pub fn handle_project_command(
     command: ProjectCommands,
@@ -46,7 +47,7 @@ pub fn handle_project_command(
             }
         }
         ProjectCommands::Delete { arg_id } => {
-            if let Err(e) = handle_delete_note(conn, arg_id) {
+            if let Err(e) = handle_delete_project(conn, arg_id) {
                 eprintln!("Failed to delete project: {}", e);
             }
         }

@@ -1,7 +1,4 @@
-pub mod cli;
-pub mod commands;
 pub mod config;
-pub mod handler;
 pub mod interface;
 pub mod markdown;
 pub mod model;
