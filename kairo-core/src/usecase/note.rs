@@ -69,6 +69,7 @@ pub fn handle_get_note(conn: &mut SqliteConnection, note_id: String) -> Result<(
 }
 
 pub fn handle_update_note(
+    config: &AppConfig,
     conn: &mut SqliteConnection,
     note_id: String,
     title: Option<String>,
@@ -76,12 +77,27 @@ pub fn handle_update_note(
     sub_type: Option<String>,
     project_id: Option<String>,
     task_id: Option<String>,
+    tags: Option<Vec<String>>,
 ) -> Result<(), anyhow::Error> {
-    let note = update_note(
-        conn, &note_id, title, note_type, sub_type, project_id, task_id,
+    let updated_note = update_note(
+        conn, &note_id, title, note_type, sub_type, project_id, task_id, tags,
     )?;
 
-    println!("Updated note: {:?}", note.id);
+    let dir = &config.paths.notes_dir;
+    println!("{:?}", &updated_note);
+    let tags = get_tags_by_note_id(conn, &updated_note.id).unwrap();
+    let tags_str = tags.into_iter().map(|t| t.tag_name).collect();
+
+    let front_matter = NoteFrontMatter {
+        item: updated_note.clone(),
+        tags: tags_str,
+    };
+    if let Err(e) = write_to_markdown(&front_matter, dir) {
+        eprintln!("Failed to write note: {}", e)
+    }
+
+    println!("Updated note: {:?}", updated_note.id);
+    println!("Run `kairo tui` to open dashboard");
     Ok(())
 }
 

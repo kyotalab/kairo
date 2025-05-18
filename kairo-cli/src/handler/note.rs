@@ -48,8 +48,10 @@ pub fn handle_note_command(command: NoteCommands, conn: &mut SqliteConnection, c
             arg_sub_type,
             arg_project_id,
             arg_task_id,
+            arg_tags,
         } => {
             if let Err(e) = handle_update_note(
+                config,
                 conn,
                 arg_id,
                 arg_title,
@@ -57,6 +59,7 @@ pub fn handle_note_command(command: NoteCommands, conn: &mut SqliteConnection, c
                 arg_sub_type,
                 arg_project_id,
                 arg_task_id,
+                arg_tags,
             ) {
                 eprintln!("Failed to update note: {}", e);
             }

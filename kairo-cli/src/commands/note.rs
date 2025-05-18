@@ -43,6 +43,8 @@ pub enum NoteCommands {
         arg_project_id: Option<String>,
         #[arg(long = "tid")]
         arg_task_id: Option<String>,
+        #[arg(long = "tag")]
+        arg_tags: Option<Vec<String>>,
         /* TODO
          *  note update --tagでタグ更新はどうする？--tagが指定されなかった場合は、変更なし。--tagが指定されたときは、前のtagは削除して、新たに付け直す？
          */

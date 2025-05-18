@@ -196,6 +196,7 @@ pub fn update_note(
     updated_sub_type: Option<String>,
     updated_project_id: Option<String>,
     updated_task_id: Option<String>,
+    updated_tags: Option<Vec<String>>,
 ) -> Result<Note, Error> {
     let exist_note = ensure_note_exists(conn, note_id)?;
 
@@ -221,6 +222,29 @@ pub fn update_note(
         project_id: updated_project_id,
         task_id: updated_task_id,
     };
+
+    match updated_tags {
+        None => {
+            // 何もしない
+        }
+        Some(ref tags) => {
+            delete_note_tag_by_note_id(conn, note_id)?;
+
+            if !tags.is_empty() {
+                for tag_name in tags {
+                    // タグ取得または作成
+                    let tag = match get_tag_by_name(conn, tag_name.clone()) {
+                        Ok(Some(existing)) => existing,
+                        Ok(None) => create_tag(conn, tag_name.clone())?,
+                        Err(e) => return Err(e),
+                    };
+
+                    // note_tag を作成
+                    create_note_tag(conn, &note_id, &tag.id)?;
+                }
+            }
+        }
+    }
 
     diesel::update(notes.find(note_id))
         .set(updated_note)
