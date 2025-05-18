@@ -21,6 +21,10 @@ pub enum NoteCommands {
         arg_archived: Option<bool>,
         #[arg(long = "deleted")]
         arg_deleted: Option<bool>,
+        #[arg(long = "tag")]
+        arg_tags: Option<Vec<String>>,
+        #[arg(long = "order")]
+        arg_order: Option<String>,
         /* TODO
          *  1. note list --tagで指定のタグを含むノートを表示できるようにする。
          *  2. 現状日付が降順でsortされているため、note list --order desc or ascで並び替えできるようにする。

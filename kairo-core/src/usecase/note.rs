@@ -39,8 +39,16 @@ pub fn handle_list_notes(
     conn: &mut SqliteConnection,
     include_archived: Option<bool>,
     include_deleted: Option<bool>,
+    include_tags: Option<Vec<String>>,
+    include_order: Option<String>,
 ) -> Result<(), anyhow::Error> {
-    let notes = list_notes(conn, include_archived, include_deleted)?;
+    let notes = list_notes(
+        conn,
+        include_archived,
+        include_deleted,
+        include_tags,
+        include_order,
+    )?;
     for note in notes {
         println!("{:?}", note);
     }
