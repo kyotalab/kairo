@@ -4,13 +4,14 @@ use serde::Serialize;
 use std::fs;
 use std::io;
 
-pub fn write_to_markdown<C, F, N>(item: &C, dir: &str) -> Result<(), io::Error>
+pub fn write_to_markdown<C, F, I>(item: &C, dir: &str) -> Result<(), io::Error>
 where
-    // NoteContent
+    // C(Content)
     C: MarkdownExportable<F> + Serialize,
-    // NoteFrontMatter
-    F: FrontMatterExportable<N> + Serialize,
-    N: HasItem,
+    // F(FrontMatter)
+    F: FrontMatterExportable<I> + Serialize,
+    // I(Item)
+    I: HasItem,
 {
     let serialized = serde_yaml::to_string(&item.get_front_matter()).map_err(|e| {
         io::Error::new(
@@ -41,14 +42,11 @@ where
     Ok(())
 }
 
-// TODO ここにMarkdownをパースして、front_matterとbodyを取得する関数を実装する。
 pub fn parse_markdown<T, U>(item: &T, dir: &str) -> Result<(String, String), io::Error>
 where
     T: MarkdownParsable<U> + Serialize,
     U: HasItem,
 {
-    // use regex::Regex;
-
     let path = format!("{}/{}.md", dir, item.get_item().id());
 
     let content = fs::read_to_string(path)?;
