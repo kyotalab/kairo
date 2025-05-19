@@ -1,8 +1,14 @@
 use crate::{
-    interface::{HasItem, MarkdownExportable},
+    interface::{FrontMatterExportable, HasItem, MarkdownExportable, MarkdownParsable},
     model::Task,
 };
 use serde::Serialize;
+
+#[derive(Debug, Serialize)]
+pub struct TaskContent {
+    pub front_matter: TaskFrontMatter,
+    pub body: Option<String>,
+}
 
 #[derive(Debug, Serialize)]
 pub struct TaskFrontMatter {
@@ -11,7 +17,17 @@ pub struct TaskFrontMatter {
     pub tags: Vec<String>,
 }
 
-impl MarkdownExportable<Task> for TaskFrontMatter {
+impl MarkdownExportable<TaskFrontMatter> for TaskContent {
+    fn get_front_matter(&self) -> &TaskFrontMatter {
+        &self.front_matter
+    }
+
+    fn get_body(&self) -> &Option<String> {
+        &self.body
+    }
+}
+
+impl FrontMatterExportable<Task> for TaskFrontMatter {
     fn get_item(&self) -> &Task {
         &self.item
     }
@@ -28,5 +44,11 @@ impl HasItem for Task {
 
     fn title(&self) -> &str {
         &self.title
+    }
+}
+
+impl MarkdownParsable<Task> for Task {
+    fn get_item(&self) -> &Task {
+        &self
     }
 }

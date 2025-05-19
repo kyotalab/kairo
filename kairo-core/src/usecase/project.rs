@@ -1,4 +1,9 @@
-use crate::{config::AppConfig, markdown::ProjectFrontMatter, store::*, util::write_to_markdown};
+use crate::{
+    config::AppConfig,
+    markdown::{ProjectContent, ProjectFrontMatter},
+    store::*,
+    util::write_to_markdown,
+};
 use anyhow::Ok;
 use diesel::SqliteConnection;
 
@@ -21,7 +26,12 @@ pub fn handle_create_project(
         tags: tags_str,
     };
 
-    if let Err(e) = write_to_markdown(&front_matter, dir) {
+    let project_content = ProjectContent {
+        front_matter,
+        body: None,
+    };
+
+    if let Err(e) = write_to_markdown(&project_content, dir) {
         eprintln!("Failed to write project: {}", e)
     }
     println!("Run `kairo tui` to open dashboard");

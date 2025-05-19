@@ -1,4 +1,9 @@
-use crate::{config::AppConfig, markdown::TaskFrontMatter, store::*, util::write_to_markdown};
+use crate::{
+    config::AppConfig,
+    markdown::{TaskContent, TaskFrontMatter},
+    store::*,
+    util::write_to_markdown,
+};
 use anyhow::Ok;
 use diesel::SqliteConnection;
 
@@ -32,7 +37,12 @@ pub fn handle_create_task(
         tags: tags_str,
     };
 
-    if let Err(e) = write_to_markdown(&front_matter, dir) {
+    let task_content = TaskContent {
+        front_matter,
+        body: None,
+    };
+
+    if let Err(e) = write_to_markdown(&task_content, dir) {
         eprintln!("Failed to write task: {}", e)
     }
     println!("Run `kairo tui` to open dashboard");

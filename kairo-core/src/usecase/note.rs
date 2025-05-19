@@ -1,6 +1,8 @@
 use crate::{
-    config::AppConfig, markdown::NoteFrontMatter, store::note::*, store::tag::get_tags_by_note_id,
-    util::write_to_markdown,
+    config::AppConfig,
+    markdown::{NoteContent, NoteFrontMatter},
+    store::{note::*, tag::get_tags_by_note_id},
+    util::{parse_markdown, write_to_markdown},
 };
 use anyhow::Ok;
 use diesel::SqliteConnection;
@@ -28,7 +30,11 @@ pub fn handle_create_note(
         item: note,
         tags: tags_str,
     };
-    if let Err(e) = write_to_markdown(&front_matter, dir) {
+    let note_content = NoteContent {
+        front_matter,
+        body: None,
+    };
+    if let Err(e) = write_to_markdown(&note_content, dir) {
         eprintln!("Failed to write note: {}", e)
     }
     println!("Run `kairo tui` to open dashboard");
@@ -86,18 +92,28 @@ pub fn handle_update_note(
     let dir = &config.paths.notes_dir;
     println!("{:?}", &updated_note);
     let tags = get_tags_by_note_id(conn, &updated_note.id).unwrap();
-    let tags_str = tags.into_iter().map(|t| t.tag_name).collect();
+    let tags_str: Vec<_> = tags.into_iter().map(|t| t.tag_name).collect();
 
-    let front_matter = NoteFrontMatter {
+    let contents = parse_markdown(&updated_note, dir)?;
+    // let front_matter = contents.0;
+    let body = Some(contents.1);
+
+    let note_front_matter = NoteFrontMatter {
         item: updated_note.clone(),
         tags: tags_str,
     };
-    if let Err(e) = write_to_markdown(&front_matter, dir) {
+
+    let note_content = NoteContent {
+        front_matter: note_front_matter,
+        body,
+    };
+
+    if let Err(e) = write_to_markdown(&note_content, dir) {
         eprintln!("Failed to write note: {}", e)
     }
 
-    println!("Updated note: {:?}", updated_note.id);
-    println!("Run `kairo tui` to open dashboard");
+    // println!("Updated note: {:?}", updated_note.id);
+    // println!("Run `kairo tui` to open dashboard");
     Ok(())
 }
 

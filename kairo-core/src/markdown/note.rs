@@ -1,8 +1,14 @@
 use crate::{
-    interface::{HasItem, MarkdownExportable},
+    interface::{FrontMatterExportable, HasItem, MarkdownExportable, MarkdownParsable},
     model::Note,
 };
 use serde::Serialize;
+
+#[derive(Debug, Serialize)]
+pub struct NoteContent {
+    pub front_matter: NoteFrontMatter,
+    pub body: Option<String>,
+}
 
 #[derive(Debug, Serialize)]
 pub struct NoteFrontMatter {
@@ -11,7 +17,17 @@ pub struct NoteFrontMatter {
     pub tags: Vec<String>,
 }
 
-impl MarkdownExportable<Note> for NoteFrontMatter {
+impl MarkdownExportable<NoteFrontMatter> for NoteContent {
+    fn get_front_matter(&self) -> &NoteFrontMatter {
+        &self.front_matter
+    }
+
+    fn get_body(&self) -> &Option<String> {
+        &self.body
+    }
+}
+
+impl FrontMatterExportable<Note> for NoteFrontMatter {
     fn get_item(&self) -> &Note {
         &self.item
     }
@@ -28,5 +44,11 @@ impl HasItem for Note {
 
     fn title(&self) -> &str {
         &self.title
+    }
+}
+
+impl MarkdownParsable<Note> for Note {
+    fn get_item(&self) -> &Note {
+        &self
     }
 }
