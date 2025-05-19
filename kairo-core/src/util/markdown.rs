@@ -52,8 +52,8 @@ where
     let content = fs::read_to_string(path)?;
     let re = String::from("---");
 
-    // let re = Regex::new("---").unwrap();
-    let splitted_contents: Vec<_> = content.split(&re).collect();
+    let splitted_contents = content.splitn(3, &re);
+
     let contents: Vec<_> = splitted_contents
         .into_iter()
         .map(|content| content.to_string())
