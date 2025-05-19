@@ -1,3 +1,6 @@
+use std::fmt;
+use std::fmt::Display;
+
 use crate::{
     interface::{FrontMatterExportable, HasItem, MarkdownExportable, MarkdownParsable},
     model::Note,
@@ -50,5 +53,19 @@ impl HasItem for Note {
 impl MarkdownParsable<Note> for Note {
     fn get_item(&self) -> &Note {
         &self
+    }
+}
+
+impl Display for NoteContent {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let serialized = serde_yaml::to_string(&self.front_matter).map_err(|_| fmt::Error)?;
+
+        writeln!(f, "---\n{}---", serialized)?;
+
+        if let Some(body) = &self.body {
+            writeln!(f, "\n{}", body)?;
+        }
+
+        Ok(())
     }
 }

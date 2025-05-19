@@ -19,11 +19,16 @@ where
         )
     })?;
 
-    let content = format!(
-        "---\n{}---\n\n## {}\n\n",
-        serialized,
-        item.get_front_matter().get_item().title()
-    );
+    let content = if let Some(body) = item.get_body() {
+        format!("---\n{}---{}", serialized, body)
+    } else {
+        format!(
+            "---\n{}---\n\n## {}\n\n",
+            serialized,
+            item.get_front_matter().get_item().title()
+        )
+    };
+
     let path = format!("{}/{}.md", dir, item.get_front_matter().get_item().id());
 
     fs::create_dir_all(dir)?;
