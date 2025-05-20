@@ -26,8 +26,8 @@ pub enum TaskCommands {
         #[arg(long = "order")]
         arg_order: Option<String>,
         /* TODO
-         *  1. task list --tagで指定のタグを含むノートを表示できるようにする。（これタスクには不要かも？）
-         *  2. 現状,日付が降順でsortされているため、note list --order desc or ascで並び替えできるようにする。この時の並び替えは「created_at or due_date」？
+         *  1. task list --tagで指定のタグを含むノートを表示できるようにする。 OK
+         *  2. 現状,日付が降順でsortされているため、note list --order desc or ascで並び替えできるようにする。この時の並び替えは「due_date」 OK
          *  3. --priority で優先度でsortできるようにする。
          *  4. --pid でプロジェクトでsortできるようにする。
          */

@@ -165,9 +165,9 @@ pub fn list_tasks(
             .distinct();
 
         let ordered_query = match include_order.as_deref() {
-            Some("asc") => tag_filtered_query.order(created_at.asc()).into_boxed(),
-            Some("desc") => tag_filtered_query.order(created_at.desc()).into_boxed(),
-            _ => tag_filtered_query.order(created_at.desc()).into_boxed(), // デフォルトは降順
+            Some("asc") => tag_filtered_query.order(due_date.asc()).into_boxed(),
+            Some("desc") => tag_filtered_query.order(due_date.desc()).into_boxed(),
+            _ => tag_filtered_query.order(due_date.desc()).into_boxed(), // デフォルトは降順
         };
 
         return Ok(ordered_query.load::<Task>(conn)?);
