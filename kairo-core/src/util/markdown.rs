@@ -70,6 +70,6 @@ where
         .map(|content| content.to_string())
         .collect();
 
-    let note_content = (contents[1].clone(), contents[2].clone());
-    Ok(note_content)
+    let markdown_content = (contents[1].clone(), contents[2].clone());
+    Ok(markdown_content)
 }

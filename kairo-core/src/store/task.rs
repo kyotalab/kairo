@@ -116,7 +116,7 @@ pub fn create_task(
         .returning(Task::as_select())
         .get_result(conn)?;
 
-    // Tag と ProjectTag の保存処理
+    // Tag と TaskTag の保存処理
     if let Some(tag_names) = input_tag_names {
         for name in tag_names {
             // タグ取得または作成
@@ -126,7 +126,7 @@ pub fn create_task(
                 Err(e) => return Err(e),
             };
 
-            // note_tag を作成
+            // task_tag を作成
             create_task_tag(conn, &task.id, &tag.id)?;
         }
     }
@@ -209,6 +209,7 @@ pub fn update_task(
     updated_task_priority: Option<String>,
     updated_due_date: Option<String>,
     updated_project_id: Option<String>,
+    updated_tags: Option<Vec<String>>,
 ) -> Result<Task, Error> {
     let _exist_task = ensure_task_exists(conn, task_id)?;
     let validated_task_priority = parse_task_priority(updated_task_priority)?;
@@ -227,6 +228,29 @@ pub fn update_task(
         updated_at: Utc::now().naive_utc(),
         project_id: updated_project_id,
     };
+
+    match updated_tags {
+        None => {
+            // 何もしない
+        }
+        Some(ref tags) => {
+            delete_task_tag_by_task_id(conn, task_id)?;
+
+            if !tags.is_empty() {
+                for tag_name in tags {
+                    // タグ取得または作成
+                    let tag = match get_tag_by_name(conn, tag_name.clone()) {
+                        Ok(Some(existing)) => existing,
+                        Ok(None) => create_tag(conn, tag_name.clone())?,
+                        Err(e) => return Err(e),
+                    };
+
+                    // task_tag を作成
+                    create_task_tag(conn, &task_id, &tag.id)?;
+                }
+            }
+        }
+    }
 
     diesel::update(tasks.find(task_id))
         .set(updated_task)

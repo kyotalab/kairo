@@ -2,7 +2,7 @@ use crate::{
     config::AppConfig,
     markdown::{ProjectContent, ProjectFrontMatter},
     store::*,
-    util::write_to_markdown,
+    util::{parse_markdown, write_to_markdown},
 };
 use anyhow::Ok;
 use diesel::SqliteConnection;
@@ -75,15 +75,40 @@ pub fn handle_get_project(
 }
 
 pub fn handle_update_project(
+    config: &AppConfig,
     conn: &mut SqliteConnection,
     project_id: String,
     title: Option<String>,
     description: Option<String>,
     tags: Option<Vec<String>>,
 ) -> Result<(), anyhow::Error> {
-    let project = update_project(conn, &project_id, title, description, tags)?;
+    let updated_project = update_project(conn, &project_id, title, description, tags)?;
 
-    println!("Updated project: {:?}", project.id);
+    let dir = &config.paths.projects_dir;
+    println!("{:?}", &updated_project);
+    let tags = get_tags_by_project_id(conn, &updated_project.id).unwrap();
+    let tags_str: Vec<_> = tags.into_iter().map(|t| t.tag_name).collect();
+
+    let contents = parse_markdown(&updated_project, dir)?;
+    // let front_matter = contents.0;
+    let body = Some(contents.1);
+
+    let project_front_matter = ProjectFrontMatter {
+        item: updated_project.clone(),
+        tags: tags_str,
+    };
+
+    let project_content = ProjectContent {
+        front_matter: project_front_matter,
+        body,
+    };
+
+    if let Err(e) = write_to_markdown(&project_content, dir) {
+        eprintln!("Failed to write project: {}", e)
+    }
+
+    // println!("Updated project: {:?}", updated_project.id);
+    // println!("Run `kairo tui` to open dashboard");
     Ok(())
 }
 

@@ -48,8 +48,10 @@ pub fn handle_task_command(command: TaskCommands, conn: &mut SqliteConnection, c
             arg_priority,
             arg_due_date,
             arg_project_id,
+            arg_tags,
         } => {
             if let Err(e) = handle_update_task(
+                config,
                 conn,
                 arg_id,
                 arg_title,
@@ -57,6 +59,7 @@ pub fn handle_task_command(command: TaskCommands, conn: &mut SqliteConnection, c
                 arg_priority,
                 arg_due_date,
                 arg_project_id,
+                arg_tags,
             ) {
                 eprintln!("Failed to update task: {}", e);
             }

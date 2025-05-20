@@ -1,3 +1,6 @@
+use std::fmt;
+use std::fmt::Display;
+
 use crate::{
     interface::{FrontMatterExportable, HasItem, MarkdownExportable, MarkdownParsable},
     model::Task,
@@ -50,5 +53,19 @@ impl HasItem for Task {
 impl MarkdownParsable<Task> for Task {
     fn get_item(&self) -> &Task {
         &self
+    }
+}
+
+impl Display for TaskContent {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let serialized = serde_yaml::to_string(&self.front_matter).map_err(|_| fmt::Error)?;
+
+        writeln!(f, "---\n{}---", serialized)?;
+
+        if let Some(body) = &self.body {
+            writeln!(f, "\n{}", body)?;
+        }
+
+        Ok(())
     }
 }

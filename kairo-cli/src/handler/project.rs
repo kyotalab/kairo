@@ -43,7 +43,7 @@ pub fn handle_project_command(
             arg_tags,
         } => {
             if let Err(e) =
-                handle_update_project(conn, arg_id, arg_title, arg_description, arg_tags)
+                handle_update_project(config, conn, arg_id, arg_title, arg_description, arg_tags)
             {
                 eprintln!("Failed to update project: {}", e);
             }

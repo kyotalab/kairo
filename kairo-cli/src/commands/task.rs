@@ -49,6 +49,8 @@ pub enum TaskCommands {
         arg_due_date: Option<String>,
         #[arg(long = "pid")]
         arg_project_id: Option<String>,
+        #[arg(long = "tag")]
+        arg_tags: Option<Vec<String>>,
         /* TODO
          *  task update --tagでタグ更新はどうする？--tagが指定されなかった場合は、変更なし。--tagが指定されたときは、前のtagは削除して、新たに付け直す？
          */

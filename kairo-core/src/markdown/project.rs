@@ -1,3 +1,6 @@
+use std::fmt;
+use std::fmt::Display;
+
 use crate::{
     interface::{FrontMatterExportable, HasItem, MarkdownExportable, MarkdownParsable},
     model::Project,
@@ -50,5 +53,19 @@ impl HasItem for Project {
 impl MarkdownParsable<Project> for Project {
     fn get_item(&self) -> &Project {
         &self
+    }
+}
+
+impl Display for ProjectContent {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let serialized = serde_yaml::to_string(&self.front_matter).map_err(|_| fmt::Error)?;
+
+        writeln!(f, "---\n{}---", serialized)?;
+
+        if let Some(body) = &self.body {
+            writeln!(f, "\n{}", body)?;
+        }
+
+        Ok(())
     }
 }

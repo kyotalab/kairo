@@ -2,7 +2,7 @@ use crate::{
     config::AppConfig,
     markdown::{TaskContent, TaskFrontMatter},
     store::*,
-    util::write_to_markdown,
+    util::{parse_markdown, write_to_markdown},
 };
 use anyhow::Ok;
 use diesel::SqliteConnection;
@@ -83,6 +83,7 @@ pub fn handle_get_task(conn: &mut SqliteConnection, task_id: String) -> Result<(
 }
 
 pub fn handle_update_task(
+    config: &AppConfig,
     conn: &mut SqliteConnection,
     task_id: String,
     title: Option<String>,
@@ -90,8 +91,9 @@ pub fn handle_update_task(
     priority: Option<String>,
     due_date: Option<String>,
     project_id: Option<String>,
+    tags: Option<Vec<String>>,
 ) -> Result<(), anyhow::Error> {
-    let task = update_task(
+    let updated_task = update_task(
         conn,
         &task_id,
         title,
@@ -99,9 +101,34 @@ pub fn handle_update_task(
         priority,
         due_date,
         project_id,
+        tags,
     )?;
 
-    println!("Updated task: {:?}", task.id);
+    let dir = &config.paths.tasks_dir;
+    println!("{:?}", &updated_task);
+    let tags = get_tags_by_task_id(conn, &updated_task.id).unwrap();
+    let tags_str: Vec<_> = tags.into_iter().map(|t| t.tag_name).collect();
+
+    let contents = parse_markdown(&updated_task, dir)?;
+    // let front_matter = contents.0;
+    let body = Some(contents.1);
+
+    let task_front_matter = TaskFrontMatter {
+        item: updated_task.clone(),
+        tags: tags_str,
+    };
+
+    let task_content = TaskContent {
+        front_matter: task_front_matter,
+        body,
+    };
+
+    if let Err(e) = write_to_markdown(&task_content, dir) {
+        eprintln!("Failed to write note: {}", e)
+    }
+
+    // println!("Updated note: {:?}", updated_task.id);
+    // println!("Run `kairo tui` to open dashboard");
     Ok(())
 }
 

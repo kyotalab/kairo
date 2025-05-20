@@ -112,7 +112,7 @@ pub fn create_project(
                 Err(e) => return Err(e),
             };
 
-            // note_tag を作成
+            // project_tag を作成
             create_project_tag(conn, &project.id, &tag.id)?;
         }
     }
@@ -221,8 +221,8 @@ pub fn update_project(
                         Err(e) => return Err(e),
                     };
 
-                    // note_tag を作成
-                    create_note_tag(conn, &project_id, &tag.id)?;
+                    // project_tag を作成
+                    create_project_tag(conn, &project_id, &tag.id)?;
                 }
             }
         }
