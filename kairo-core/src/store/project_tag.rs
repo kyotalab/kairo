@@ -1,4 +1,7 @@
-use crate::{model::ProjectTag, schema::project_tags};
+use crate::{
+    model::ProjectTag,
+    schema::project_tags::{self, project_id},
+};
 use diesel::{SqliteConnection, prelude::*, result::Error};
 
 // ==============================
@@ -28,4 +31,46 @@ pub fn create_project_tag(
         .values(&new_project_tag)
         .returning(ProjectTag::as_select())
         .get_result(conn)
+}
+
+// ==============================
+// ▼ Read / Select
+// ==============================
+pub fn get_project_tags_by_project_id(
+    conn: &mut SqliteConnection,
+    input_project_id: &str,
+) -> Result<Option<Vec<ProjectTag>>, Error> {
+    let project_tag = project_tags::table
+        .filter(project_tags::project_id.eq(input_project_id))
+        .select(ProjectTag::as_select())
+        .load::<ProjectTag>(conn)
+        .optional()?;
+
+    Ok(project_tag)
+}
+
+// ==============================
+// ▼ Delete
+// ==============================
+pub fn delete_project_tag_by_project_id(
+    conn: &mut SqliteConnection,
+    input_project_id: &str,
+) -> Result<(), Error> {
+    let _exist_project_tags = ensure_project_tag_exists(conn, input_project_id)?;
+    diesel::delete(project_tags::table.filter(project_id.eq(input_project_id))).execute(conn)?;
+
+    Ok(())
+}
+
+// ==============================
+// ▼ Internal Common Utils
+// ==============================
+fn ensure_project_tag_exists(
+    conn: &mut SqliteConnection,
+    input_project_id: &str,
+) -> Result<Vec<ProjectTag>, Error> {
+    match get_project_tags_by_project_id(conn, input_project_id)? {
+        Some(project_tag) => Ok(project_tag),
+        None => Err(Error::QueryBuilderError("Project_tag not found".into())),
+    }
 }

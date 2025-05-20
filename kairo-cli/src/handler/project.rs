@@ -22,8 +22,12 @@ pub fn handle_project_command(
         ProjectCommands::List {
             arg_archived,
             arg_deleted,
+            arg_tags,
+            arg_order,
         } => {
-            if let Err(e) = handle_list_projects(conn, arg_archived, arg_deleted) {
+            if let Err(e) =
+                handle_list_projects(conn, arg_archived, arg_deleted, arg_tags, arg_order)
+            {
                 eprintln!("Failed to list projects: {}", e);
             }
         }
@@ -36,8 +40,11 @@ pub fn handle_project_command(
             arg_id,
             arg_title,
             arg_description,
+            arg_tags,
         } => {
-            if let Err(e) = handle_update_project(conn, arg_id, arg_title, arg_description) {
+            if let Err(e) =
+                handle_update_project(conn, arg_id, arg_title, arg_description, arg_tags)
+            {
                 eprintln!("Failed to update project: {}", e);
             }
         }

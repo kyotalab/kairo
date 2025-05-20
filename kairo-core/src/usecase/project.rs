@@ -42,8 +42,16 @@ pub fn handle_list_projects(
     conn: &mut SqliteConnection,
     include_archived: Option<bool>,
     include_deleted: Option<bool>,
+    include_tags: Option<Vec<String>>,
+    include_order: Option<String>,
 ) -> Result<(), anyhow::Error> {
-    let projects = list_projects(conn, include_archived, include_deleted)?;
+    let projects = list_projects(
+        conn,
+        include_archived,
+        include_deleted,
+        include_tags,
+        include_order,
+    )?;
     for project in projects {
         println!("{:?}", project);
     }
@@ -71,8 +79,9 @@ pub fn handle_update_project(
     project_id: String,
     title: Option<String>,
     description: Option<String>,
+    tags: Option<Vec<String>>,
 ) -> Result<(), anyhow::Error> {
-    let project = update_project(conn, &project_id, title, description)?;
+    let project = update_project(conn, &project_id, title, description, tags)?;
 
     println!("Updated project: {:?}", project.id);
     Ok(())
