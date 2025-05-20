@@ -4,6 +4,12 @@ use serde::Serialize;
 use std::fs;
 use std::io;
 
+// この関数は、FrontMatterとBodyをマッピングした構造体をシリアライズして
+// Markdown ファイルを生成する。
+//
+// 新規作成と更新の時に合わせて、条件を分岐させている。
+// 新規作成の場合（note create）、BodyにはTitleのみ。
+// 更新の場合（note update）、Bodyには書かれている内容で上書き。
 pub fn write_to_markdown<C, F, I>(item: &C, dir: &str) -> Result<(), io::Error>
 where
     // C(Content)
@@ -42,6 +48,11 @@ where
     Ok(())
 }
 
+// この関数は Markdown 形式の文字列を解析して、
+// FrontMatter と 本文を分割して返す。
+//
+// `---` を区切り文字として使うが、本文中にも現れる可能性があるため、
+// 先頭から3つまでの分割に限定している。
 pub fn parse_markdown<T, U>(item: &T, dir: &str) -> Result<(String, String), io::Error>
 where
     T: MarkdownParsable<U> + Serialize,
