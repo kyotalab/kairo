@@ -1,7 +1,9 @@
 use crate::{
     model::{Task, TaskPriority},
-    schema::tasks,
-    schema::tasks::dsl::*,
+    schema::{
+        tags, task_tags,
+        tasks::{self, dsl::*},
+    },
     store::*,
 };
 use chrono::{NaiveDate, NaiveDateTime, Utc};
@@ -139,37 +141,51 @@ pub fn list_tasks(
     conn: &mut SqliteConnection,
     include_archived: Option<bool>,
     include_deleted: Option<bool>,
+    include_tags: Option<Vec<String>>,
+    include_order: Option<String>,
 ) -> Result<Vec<Task>, Error> {
-    let mut query = tasks.into_boxed();
+    let archived_flag = include_archived.unwrap_or(false);
+    let deleted_flag = include_deleted.unwrap_or(false);
 
-    match (
-        include_archived.unwrap_or(false),
-        include_deleted.unwrap_or(false),
-    ) {
-        (false, false) => {
-            // 通常表示（Activeなノートのみ）
-            query = query.filter(archived.eq(false)).filter(deleted.eq(false));
-        }
-        (true, false) => {
-            // アーカイブ済のみ
-            query = query.filter(archived.eq(true)).filter(deleted.eq(false));
-        }
-        (false, true) => {
-            // 削除済のみ
-            query = query.filter(archived.eq(false)).filter(deleted.eq(true));
-        }
-        (true, true) => {
-            // 禁止：両方trueは「ありえない状態」
-            return Err(Error::QueryBuilderError(
-                "Invalid combination: archived=true AND deleted=true".into(),
-            ));
-        }
+    if archived_flag && deleted_flag {
+        return Err(Error::QueryBuilderError(
+            "Invalid combination: archived=true AND deleted=true".into(),
+        ));
     }
 
-    Ok(query
-        .select(Task::as_select())
-        .order(created_at.desc())
-        .load(conn)?)
+    // タグフィルターがある場合：JOIN込みクエリで返す
+    if let Some(tags_filter) = include_tags {
+        let tag_filtered_query = tasks
+            .inner_join(task_tags::table.on(tasks::id.eq(task_tags::task_id)))
+            .inner_join(tags::table.on(tags::id.eq(task_tags::tag_id)))
+            .filter(tags::tag_name.eq_any(tags_filter))
+            .filter(archived.eq(archived_flag))
+            .filter(deleted.eq(deleted_flag))
+            .select(Task::as_select())
+            .distinct();
+
+        let ordered_query = match include_order.as_deref() {
+            Some("asc") => tag_filtered_query.order(created_at.asc()).into_boxed(),
+            Some("desc") => tag_filtered_query.order(created_at.desc()).into_boxed(),
+            _ => tag_filtered_query.order(created_at.desc()).into_boxed(), // デフォルトは降順
+        };
+
+        return Ok(ordered_query.load::<Task>(conn)?);
+    }
+
+    // タグフィルターがない場合
+    let base_query = tasks
+        .filter(archived.eq(archived_flag))
+        .filter(deleted.eq(deleted_flag))
+        .select(Task::as_select());
+
+    let ordered_query = match include_order.as_deref() {
+        Some("asc") => base_query.order(created_at.asc()).into_boxed(),
+        Some("desc") => base_query.order(created_at.desc()).into_boxed(),
+        _ => base_query.order(created_at.desc()).into_boxed(), // デフォルト: desc
+    };
+
+    Ok(ordered_query.load::<Task>(conn)?)
 }
 
 pub fn get_task_by_id(conn: &mut SqliteConnection, task_id: &str) -> Result<Option<Task>, Error> {

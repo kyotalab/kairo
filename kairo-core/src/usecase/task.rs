@@ -53,8 +53,16 @@ pub fn handle_list_tasks(
     conn: &mut SqliteConnection,
     include_archived: Option<bool>,
     include_deleted: Option<bool>,
+    include_tags: Option<Vec<String>>,
+    include_order: Option<String>,
 ) -> Result<(), anyhow::Error> {
-    let tasks = list_tasks(conn, include_archived, include_deleted)?;
+    let tasks = list_tasks(
+        conn,
+        include_archived,
+        include_deleted,
+        include_tags,
+        include_order,
+    )?;
     for task in tasks {
         println!("{:?}", task);
     }

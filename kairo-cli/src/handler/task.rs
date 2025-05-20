@@ -28,8 +28,11 @@ pub fn handle_task_command(command: TaskCommands, conn: &mut SqliteConnection, c
         TaskCommands::List {
             arg_archived,
             arg_deleted,
+            arg_tags,
+            arg_order,
         } => {
-            if let Err(e) = handle_list_tasks(conn, arg_archived, arg_deleted) {
+            if let Err(e) = handle_list_tasks(conn, arg_archived, arg_deleted, arg_tags, arg_order)
+            {
                 eprintln!("Failed to list tasks: {}", e);
             }
         }
