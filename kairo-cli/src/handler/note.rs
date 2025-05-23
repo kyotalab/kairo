@@ -28,7 +28,7 @@ pub fn handle_note_command(command: NoteCommands, conn: &mut SqliteConnection, c
         NoteCommands::List {
             arg_archived,
             arg_deleted,
-            arg_tags, // TODO note list --tagで指定のタグを含むノートを表示できるようにする。
+            arg_tags,
             arg_order,
         } => {
             if let Err(e) = handle_list_notes(conn, arg_archived, arg_deleted, arg_tags, arg_order)

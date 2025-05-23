@@ -30,9 +30,18 @@ pub fn handle_task_command(command: TaskCommands, conn: &mut SqliteConnection, c
             arg_deleted,
             arg_tags,
             arg_order,
+            arg_priority,
+            arg_project_id,
         } => {
-            if let Err(e) = handle_list_tasks(conn, arg_archived, arg_deleted, arg_tags, arg_order)
-            {
+            if let Err(e) = handle_list_tasks(
+                conn,
+                arg_archived,
+                arg_deleted,
+                arg_tags,
+                arg_order,
+                arg_priority,
+                arg_project_id,
+            ) {
                 eprintln!("Failed to list tasks: {}", e);
             }
         }

@@ -143,6 +143,8 @@ pub fn list_tasks(
     include_deleted: Option<bool>,
     include_tags: Option<Vec<String>>,
     include_order: Option<String>,
+    include_priority: Option<String>,
+    include_project_id: Option<String>,
 ) -> Result<Vec<Task>, Error> {
     let archived_flag = include_archived.unwrap_or(false);
     let deleted_flag = include_deleted.unwrap_or(false);
@@ -173,19 +175,39 @@ pub fn list_tasks(
         return Ok(ordered_query.load::<Task>(conn)?);
     }
 
-    // タグフィルターがない場合
-    let base_query = tasks
+    let mut query = tasks
         .filter(archived.eq(archived_flag))
         .filter(deleted.eq(deleted_flag))
-        .select(Task::as_select());
+        .into_boxed(); // 最初に into_boxed() しておく
 
-    let ordered_query = match include_order.as_deref() {
-        Some("asc") => base_query.order(created_at.asc()).into_boxed(),
-        Some("desc") => base_query.order(created_at.desc()).into_boxed(),
-        _ => base_query.order(created_at.desc()).into_boxed(), // デフォルト: desc
+    // 優先度フィルター
+    if let Some(priority_str) = include_priority.as_deref() {
+        match priority_str {
+            "low" => query = query.filter(priority.eq(TaskPriority::Low)),
+            "medium" => query = query.filter(priority.eq(TaskPriority::Medium)),
+            "high" => query = query.filter(priority.eq(TaskPriority::High)),
+            _ => {
+                return Err(Error::QueryBuilderError(
+                    format!("Invalid priority: {}", priority_str).into(),
+                ));
+            }
+        }
+    }
+
+    // プロジェクトIDフィルター
+    if let Some(pid) = include_project_id.as_deref() {
+        query = query.filter(project_id.eq(pid));
+    }
+
+    // ソート順指定
+    query = match include_order.as_deref() {
+        Some("asc") => query.order(created_at.asc()),
+        Some("desc") => query.order(created_at.desc()),
+        _ => query.order(created_at.desc()), // デフォルト: desc
     };
 
-    Ok(ordered_query.load::<Task>(conn)?)
+    // 実行
+    Ok(query.select(Task::as_select()).load::<Task>(conn)?)
 }
 
 pub fn get_task_by_id(conn: &mut SqliteConnection, task_id: &str) -> Result<Option<Task>, Error> {

@@ -25,10 +25,14 @@ pub enum TaskCommands {
         arg_tags: Option<Vec<String>>,
         #[arg(long = "order")]
         arg_order: Option<String>,
+        #[arg(long = "priority")]
+        arg_priority: Option<String>,
+        #[arg(long = "pid")]
+        arg_project_id: Option<String>,
         /* TODO
          *  1. task list --tagで指定のタグを含むノートを表示できるようにする。 OK
          *  2. 現状,日付が降順でsortされているため、note list --order desc or ascで並び替えできるようにする。この時の並び替えは「due_date」 OK
-         *  3. --priority で優先度でsortできるようにする。
+         *  3. --priority で優先度でsortできるようにする。 OK
          *  4. --pid でプロジェクトでsortできるようにする。
          */
     },
@@ -51,9 +55,6 @@ pub enum TaskCommands {
         arg_project_id: Option<String>,
         #[arg(long = "tag")]
         arg_tags: Option<Vec<String>>,
-        /* TODO
-         *  task update --tagでタグ更新はどうする？--tagが指定されなかった場合は、変更なし。--tagが指定されたときは、前のtagは削除して、新たに付け直す？
-         */
     },
     Archive {
         #[arg(long = "id")]

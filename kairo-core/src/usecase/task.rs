@@ -55,6 +55,8 @@ pub fn handle_list_tasks(
     include_deleted: Option<bool>,
     include_tags: Option<Vec<String>>,
     include_order: Option<String>,
+    include_priority: Option<String>,
+    include_project_id: Option<String>,
 ) -> Result<(), anyhow::Error> {
     let tasks = list_tasks(
         conn,
@@ -62,6 +64,8 @@ pub fn handle_list_tasks(
         include_deleted,
         include_tags,
         include_order,
+        include_priority,
+        include_project_id,
     )?;
     for task in tasks {
         println!("{:?}", task);
@@ -110,7 +114,6 @@ pub fn handle_update_task(
     let tags_str: Vec<_> = tags.into_iter().map(|t| t.tag_name).collect();
 
     let contents = parse_markdown(&updated_task, dir)?;
-    // let front_matter = contents.0;
     let body = Some(contents.1);
 
     let task_front_matter = TaskFrontMatter {
