@@ -55,7 +55,7 @@ pub fn handle_list_projects(
     // for project in projects {
     //     println!("{:?}", project);
     // }
-    print_projects_as_table(&projects);
+    print_projects_as_table(conn, &projects);
     Ok(())
 }
 

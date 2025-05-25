@@ -1,6 +1,7 @@
 use clap::Subcommand;
 
 #[derive(Debug, Subcommand)]
+#[command(about = "Create, view, and remove links between notes")]
 pub enum LinkCommands {
     Create {
         #[arg(long = "from")]

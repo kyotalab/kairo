@@ -1,6 +1,7 @@
 use clap::Subcommand;
 
 #[derive(Debug, Subcommand)]
+#[command(about = "Manage tags (used to classify notes and tasks)")]
 pub enum TagCommands {
     Create {
         #[arg(short = 'n', long = "name")]

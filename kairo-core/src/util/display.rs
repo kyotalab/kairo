@@ -1,7 +1,9 @@
 use crate::model::{Note, Project, Tag, Task};
+use crate::store::{get_tags_by_note_id, get_tags_by_project_id, get_tags_by_task_id};
+use diesel::SqliteConnection;
 use prettytable::{Table, row};
 
-pub fn print_notes_as_table(notes: &[Note]) {
+pub fn print_notes_as_table(conn: &mut SqliteConnection, notes: &[Note]) {
     let mut table = Table::new();
 
     // Header
@@ -10,6 +12,7 @@ pub fn print_notes_as_table(notes: &[Note]) {
         "Title",
         "Type",
         "SubType",
+        "Tags",
         "Related Project",
         "Related Task",
         "Created",
@@ -21,26 +24,26 @@ pub fn print_notes_as_table(notes: &[Note]) {
     // Rows
     for note in notes {
         let mut sub_type = String::new();
-        let mut project_id = String::new();
-        let mut task_id = String::new();
         if let Some(sub) = note.sub_type {
             sub_type = format!("{:?}", sub);
         }
-        if let Some(pid) = &note.project_id {
-            project_id = format!("{:?}", pid);
-        }
-        if let Some(tid) = &note.task_id {
-            task_id = format!("{:?}", tid);
-        }
+        let project_id = note.project_id.as_deref().unwrap_or("").to_string();
+        let task_id = note.task_id.as_deref().unwrap_or("").to_string();
 
         let format_created = note.created_at.format("%Y/%m/%d %H:%M:%S").to_string();
         let format_updated = note.updated_at.format("%Y/%m/%d %H:%M:%S").to_string();
+
+        let tags = get_tags_by_note_id(conn, &note.id).expect("failed");
+        let tag_names: Vec<String> = tags.into_iter().map(|t| t.tag_name).collect();
+        let sep = String::from(",");
+        let str_tags = tag_names.join(&sep);
 
         table.add_row(row![
             note.id,
             note.title,
             format!("{:?}", note.note_type),
             sub_type,
+            str_tags,
             project_id,
             task_id,
             format_created,
@@ -53,7 +56,7 @@ pub fn print_notes_as_table(notes: &[Note]) {
     table.printstd();
 }
 
-pub fn print_projects_as_table(projects: &[Project]) {
+pub fn print_projects_as_table(conn: &mut SqliteConnection, projects: &[Project]) {
     let mut table = Table::new();
 
     // Header
@@ -61,6 +64,7 @@ pub fn print_projects_as_table(projects: &[Project]) {
         "ID",
         "Title",
         "Description",
+        "Tags",
         "Created",
         "Updated",
         "Archived",
@@ -77,10 +81,16 @@ pub fn print_projects_as_table(projects: &[Project]) {
         let format_created = project.created_at.format("%Y/%m/%d %H:%M:%S").to_string();
         let format_updated = project.updated_at.format("%Y/%m/%d %H:%M:%S").to_string();
 
+        let tags = get_tags_by_project_id(conn, &project.id).expect("failed");
+        let tag_names: Vec<String> = tags.into_iter().map(|t| t.tag_name).collect();
+        let sep = String::from(",");
+        let str_tags = tag_names.join(&sep);
+
         table.add_row(row![
             project.id,
             project.title,
             description,
+            str_tags,
             format_created,
             format_updated,
             project.archived,
@@ -91,7 +101,7 @@ pub fn print_projects_as_table(projects: &[Project]) {
     table.printstd();
 }
 
-pub fn print_tasks_as_table(tasks: &[Task]) {
+pub fn print_tasks_as_table(conn: &mut SqliteConnection, tasks: &[Task]) {
     let mut table = Table::new();
 
     // Header
@@ -99,6 +109,7 @@ pub fn print_tasks_as_table(tasks: &[Task]) {
         "ID",
         "Title",
         "Description",
+        "Tags",
         "Priority",
         "DueDate",
         "Created",
@@ -126,10 +137,16 @@ pub fn print_tasks_as_table(tasks: &[Task]) {
         let format_created = task.created_at.format("%Y/%m/%d %H:%M:%S").to_string();
         let format_updated = task.updated_at.format("%Y/%m/%d %H:%M:%S").to_string();
 
+        let tags = get_tags_by_task_id(conn, &task.id).expect("failed");
+        let tag_names: Vec<String> = tags.into_iter().map(|t| t.tag_name).collect();
+        let sep = String::from(",");
+        let str_tags = tag_names.join(&sep);
+
         table.add_row(row![
             task.id,
             task.title,
             description,
+            str_tags,
             priority,
             due_date,
             format_created,

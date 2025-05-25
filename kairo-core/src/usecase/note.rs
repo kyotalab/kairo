@@ -58,7 +58,7 @@ pub fn handle_list_notes(
     // for note in notes {
     //     println!("{note}");
     // }
-    print_notes_as_table(&notes);
+    print_notes_as_table(conn, &notes);
     Ok(())
 }
 

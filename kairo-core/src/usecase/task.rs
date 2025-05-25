@@ -70,7 +70,7 @@ pub fn handle_list_tasks(
     // for task in tasks {
     //     println!("{:?}", task);
     // }
-    print_tasks_as_table(&tasks);
+    print_tasks_as_table(conn, &tasks);
     Ok(())
 }
 
