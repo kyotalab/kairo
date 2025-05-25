@@ -1,4 +1,4 @@
-use crate::model::{Note, Project, Task};
+use crate::model::{Note, Project, Tag, Task};
 use prettytable::{Table, row};
 
 pub fn print_notes_as_table(notes: &[Note]) {
@@ -137,6 +137,20 @@ pub fn print_tasks_as_table(tasks: &[Task]) {
             task.archived,
             task.deleted
         ]);
+    }
+
+    table.printstd();
+}
+
+pub fn print_tags_as_table(tags: &[Tag]) {
+    let mut table = Table::new();
+
+    // Header
+    table.add_row(row!["ID", "Tag name",]);
+
+    // Rows
+    for tag in tags {
+        table.add_row(row![tag.id, tag.tag_name,]);
     }
 
     table.printstd();

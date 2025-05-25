@@ -1,6 +1,6 @@
 use crate::commands::tag::TagCommands;
 use diesel::SqliteConnection;
-use kairo_core::store::*;
+use kairo_core::{store::*, util::print_tags_as_table};
 
 pub fn handle_tag_command(command: TagCommands, conn: &mut SqliteConnection) {
     match command {
@@ -10,15 +10,16 @@ pub fn handle_tag_command(command: TagCommands, conn: &mut SqliteConnection) {
         },
         TagCommands::List { arg_deleted } => match list_tags(conn, arg_deleted) {
             Ok(tags) => {
-                for tag in tags {
-                    println!("{:?}", tag);
-                }
+                // for tag in tags {
+                //     println!("{:?}", tag);
+                // }
+                print_tags_as_table(&tags);
             }
             Err(e) => eprintln!("Failed to fetch tags: {}", e),
         },
         TagCommands::Get { arg_id } => match get_tag_by_id(conn, &arg_id) {
             Ok(Some(tag)) => {
-                println!("{:?}", tag);
+                println!("{tag}");
             }
             Ok(None) => {
                 println!("Tag not found");
