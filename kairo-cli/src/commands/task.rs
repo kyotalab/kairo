@@ -38,12 +38,6 @@ pub enum TaskCommands {
         arg_priority: Option<String>,
         #[arg(long = "pid")]
         arg_project_id: Option<String>,
-        /* TODO
-         *  1. task list --tagで指定のタグを含むノートを表示できるようにする。 OK
-         *  2. 現状,日付が降順でsortされているため、note list --order desc or ascで並び替えできるようにする。この時の並び替えは「due_date」 OK
-         *  3. --priority で優先度でsortできるようにする。 OK
-         *  4. --pid でプロジェクトでsortできるようにする。
-         */
     },
     #[command(
         about = "Get a task by ID.",
