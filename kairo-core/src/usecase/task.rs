@@ -2,7 +2,7 @@ use crate::{
     config::AppConfig,
     markdown::{TaskContent, TaskFrontMatter},
     store::*,
-    util::{parse_markdown, write_to_markdown},
+    util::{parse_markdown, print_tasks_as_table, write_to_markdown},
 };
 use anyhow::Ok;
 use diesel::SqliteConnection;
@@ -67,9 +67,10 @@ pub fn handle_list_tasks(
         include_priority,
         include_project_id,
     )?;
-    for task in tasks {
-        println!("{:?}", task);
-    }
+    // for task in tasks {
+    //     println!("{:?}", task);
+    // }
+    print_tasks_as_table(&tasks);
     Ok(())
 }
 
@@ -77,7 +78,7 @@ pub fn handle_get_task(conn: &mut SqliteConnection, task_id: String) -> Result<(
     let task = get_task_by_id(conn, &task_id)?;
     match task {
         Some(exist) => {
-            println!("{:?}", exist);
+            println!("{exist}");
         }
         None => {
             println!("task not found");

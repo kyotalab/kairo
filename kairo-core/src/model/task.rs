@@ -1,3 +1,5 @@
+use core::fmt;
+
 use crate::schema::tasks;
 use chrono::NaiveDateTime;
 use diesel::{
@@ -63,5 +65,43 @@ impl FromSql<Text, Sqlite> for TaskPriority {
             "high" => Ok(TaskPriority::High),
             other => Err(format!("Unrecognized TaskPriority variant: {}", other).into()),
         }
+    }
+}
+
+impl fmt::Display for Task {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        writeln!(f, "ID: {}", self.id)?;
+        writeln!(f, "Title: {}", self.title)?;
+        if let Some(str) = &self.description {
+            writeln!(f, "Description: {:?}", str)?;
+        } else {
+            writeln!(f, "Description: No description")?;
+        }
+        if let Some(pri) = &self.priority {
+            writeln!(f, "Priority: {:?}", pri)?;
+        }
+        if let Some(due) = &self.due_date {
+            writeln!(f, "DueDate: {}", due.format("%Y/%m/%d").to_string())?;
+        } else {
+            writeln!(f, "DueDate: No due date set")?;
+        }
+        if let Some(pid) = &self.project_id {
+            writeln!(f, "Project: {:?}", pid)?;
+        } else {
+            writeln!(f, "Project: No related project")?;
+        }
+        writeln!(
+            f,
+            "Created: {}",
+            self.created_at.format("%Y/%m/%d %H:%M:%S").to_string()
+        )?;
+        writeln!(
+            f,
+            "Updated: {}",
+            self.updated_at.format("%Y/%m/%d %H:%M:%S").to_string()
+        )?;
+        writeln!(f, "Archived: {}", self.archived)?;
+        writeln!(f, "Deleted: {}", self.deleted)?;
+        Ok(())
     }
 }

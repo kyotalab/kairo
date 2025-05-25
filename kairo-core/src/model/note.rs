@@ -10,6 +10,7 @@ use diesel::{
     sqlite::Sqlite,
 };
 use serde::{Deserialize, Serialize};
+use std::fmt;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, AsExpression, FromSqlRow, Serialize, Deserialize)]
 #[diesel(sql_type = Text)]
@@ -98,5 +99,35 @@ impl FromSql<Text, Sqlite> for SubType {
             "quote" => Ok(SubType::Quote),
             other => Err(format!("Unrecognized NoteType variant: {}", other).into()),
         }
+    }
+}
+
+impl fmt::Display for Note {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        writeln!(f, "ID: {}", self.id)?;
+        writeln!(f, "Title: {}", self.title)?;
+        writeln!(f, "Type: {:?}", self.note_type)?;
+        if let Some(sub) = &self.sub_type {
+            writeln!(f, "SubType: {:?}", sub)?;
+        }
+        if let Some(pid) = &self.project_id {
+            writeln!(f, "Project: {:?}", pid)?;
+        }
+        if let Some(tid) = &self.task_id {
+            writeln!(f, "Task: {:?}", tid)?;
+        }
+        writeln!(
+            f,
+            "Created: {}",
+            self.created_at.format("%Y/%m/%d %H:%M:%S").to_string()
+        )?;
+        writeln!(
+            f,
+            "Updated: {}",
+            self.updated_at.format("%Y/%m/%d %H:%M:%S").to_string()
+        )?;
+        writeln!(f, "Archived: {}", self.archived)?;
+        writeln!(f, "Deleted: {}", self.deleted)?;
+        Ok(())
     }
 }

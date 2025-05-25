@@ -2,7 +2,7 @@ use crate::{
     config::AppConfig,
     markdown::{ProjectContent, ProjectFrontMatter},
     store::*,
-    util::{parse_markdown, write_to_markdown},
+    util::{parse_markdown, print_projects_as_table, write_to_markdown},
 };
 use anyhow::Ok;
 use diesel::SqliteConnection;
@@ -52,9 +52,10 @@ pub fn handle_list_projects(
         include_tags,
         include_order,
     )?;
-    for project in projects {
-        println!("{:?}", project);
-    }
+    // for project in projects {
+    //     println!("{:?}", project);
+    // }
+    print_projects_as_table(&projects);
     Ok(())
 }
 
@@ -65,7 +66,7 @@ pub fn handle_get_project(
     let project = get_project_by_id(conn, &project_id)?;
     match project {
         Some(exist) => {
-            println!("{:?}", exist);
+            println!("{exist}");
         }
         None => {
             println!("Project not found");

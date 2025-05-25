@@ -19,3 +19,4 @@ anyhow = "1.0.98"
 
 clap = { version = "4.5.37", features = ["derive"] }
 diesel = { version = "2.2.0", features = ["sqlite", "returning_clauses_for_sqlite_3_35", "chrono"] }
+prettytable = "0.10.0"

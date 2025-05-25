@@ -2,7 +2,7 @@ use crate::{
     config::AppConfig,
     markdown::{NoteContent, NoteFrontMatter},
     store::{note::*, tag::get_tags_by_note_id},
-    util::{parse_markdown, write_to_markdown},
+    util::{parse_markdown, print_notes_as_table, write_to_markdown},
 };
 use anyhow::Ok;
 use diesel::SqliteConnection;
@@ -55,9 +55,10 @@ pub fn handle_list_notes(
         include_tags,
         include_order,
     )?;
-    for note in notes {
-        println!("{:?}", note);
-    }
+    // for note in notes {
+    //     println!("{note}");
+    // }
+    print_notes_as_table(&notes);
     Ok(())
 }
 
@@ -65,7 +66,7 @@ pub fn handle_get_note(conn: &mut SqliteConnection, note_id: String) -> Result<(
     let note = get_note_by_id(conn, &note_id)?;
     match note {
         Some(exist) => {
-            println!("{:?}", exist);
+            println!("{exist}");
         }
         None => {
             println!("Note not found");
@@ -112,8 +113,8 @@ pub fn handle_update_note(
         eprintln!("Failed to write note: {}", e)
     }
 
-    // println!("Updated note: {:?}", updated_note.id);
-    // println!("Run `kairo tui` to open dashboard");
+    println!("Updated note: {:?}", updated_note.id);
+    println!("Run `kairo tui` to open dashboard");
     Ok(())
 }
 
