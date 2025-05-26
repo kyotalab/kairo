@@ -1,3 +1,5 @@
+use std::fmt;
+
 use chrono::NaiveDateTime;
 use diesel::{
     backend::Backend,
@@ -56,5 +58,22 @@ impl FromSql<Text, Sqlite> for LinkType {
             "refute" => Ok(LinkType::Refute),
             other => Err(format!("Unrecognized LinkType variant: {}", other).into()),
         }
+    }
+}
+
+impl fmt::Display for LinkedNote {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        writeln!(f, "Link ID: {}", self.id)?;
+        writeln!(f, "From Note: {}", self.from_id)?;
+        writeln!(f, "To Note: {}", self.to_id)?;
+        if let Some(ln_type) = &self.link_type {
+            writeln!(f, "Link Type: {:?}", ln_type)?;
+        }
+        writeln!(
+            f,
+            "Created: {}",
+            self.created_at.format("%Y/%m/%d %H:%M:%S").to_string()
+        )?;
+        Ok(())
     }
 }

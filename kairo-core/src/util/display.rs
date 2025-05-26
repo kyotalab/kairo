@@ -1,5 +1,8 @@
-use crate::model::{Note, Project, Tag, Task};
-use crate::store::{get_tags_by_note_id, get_tags_by_project_id, get_tags_by_task_id};
+use crate::interface::HasItem;
+use crate::model::{LinkedNote, Note, Project, Tag, Task};
+use crate::store::{
+    get_note_by_id, get_tags_by_note_id, get_tags_by_project_id, get_tags_by_task_id,
+};
 use diesel::SqliteConnection;
 use prettytable::{Table, row};
 
@@ -168,6 +171,40 @@ pub fn print_tags_as_table(tags: &[Tag]) {
     // Rows
     for tag in tags {
         table.add_row(row![tag.id, tag.tag_name,]);
+    }
+
+    table.printstd();
+}
+
+pub fn print_links_as_table(conn: &mut SqliteConnection, links: &[LinkedNote]) {
+    let mut table = Table::new();
+
+    // Header
+    table.add_row(row!["ID", "From Note", "To Note", "Link Type", "Created"]);
+
+    // Rows
+    for link in links {
+        let ln_type = match link.link_type {
+            Some(ty) => format!("{:?}", ty),
+            None => "-".to_string(),
+        };
+
+        let format_created = link.created_at.format("%Y/%m/%d %H:%M:%S").to_string();
+
+        let from_note = get_note_by_id(conn, &link.from_id).expect("from_id lookup failed");
+        let to_note = get_note_by_id(conn, &link.to_id).expect("to_id lookup failed");
+
+        let from_str = match from_note {
+            Some(note) => format!("{} - {}", note.id(), note.title()),
+            None => "(not found)".to_string(),
+        };
+
+        let to_str = match to_note {
+            Some(note) => format!("{} - {}", note.id(), note.title()),
+            None => "(not found)".to_string(),
+        };
+
+        table.add_row(row![link.id, from_str, to_str, ln_type, format_created]);
     }
 
     table.printstd();
